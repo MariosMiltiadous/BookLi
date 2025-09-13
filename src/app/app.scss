@@ -1,4 +1,59 @@
-.app-container { height: 100vh; }
-.app-sidenav  { width: 260px; }
-.app-content  { padding: 16px; }
+/* Layout */
+.app-container { height: 100vh; background: #f6f7fb; }
+.app-content  { padding: 16px; max-width: 1280px; margin: 0 auto; }
+
+.logo  { width: 22px; height: 22px; display: inline-block; }
+.brand { font-weight: 600; letter-spacing: .2px; }
 .spacer { flex: 1 1 auto; }
+
+/* Sidenav appearance (grey-ish, “library” feel) */
+$app-sidenav-width: 260px;
+$app-sidenav-rail: 90px;
+
+.app-sidenav {
+  background: #f1f3f5;              /* subtle grey */
+  border-right: 1px solid #e5e7eb;   /* thin separator */
+  width: $app-sidenav-width;
+  transition: width 200ms ease;
+}
+.app-sidenav.collapsed { width: $app-sidenav-rail; }
+
+/* Toolbar styling to blend with grey rail */
+.side-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;                 /* more breathing room */
+  background: transparent;
+  box-shadow: none;
+  position: sticky; top: 0; z-index: 2; /* keep toggle visible when scrolling */
+}
+
+/* Hide labels in mini-variant, keep icons/logo */
+.app-sidenav.collapsed .brand,
+.app-sidenav.collapsed .nav-label { display: none; }
+
+/* Toggle button: make it pop on collapsed rail */
+.collapse-btn { margin-left: auto; }           /* push button to the right */
+.app-sidenav.collapsed .collapse-btn {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+  border-radius: 50%;
+}
+.app-sidenav.collapsed .collapse-btn mat-icon {
+  color: #1976d2; /* or your theme primary */
+}
+
+/* List item density tweaks (Material 3 variables) */
+::ng-deep .mat-mdc-list-item {
+  --mdc-list-list-item-one-line-container-height: 44px;
+}
+
+/* Top bar spacing */
+.top-toolbar { gap: 8px; }
+
+/* Slightly tighter layout on narrower desktops */
+@media (max-width: 1440px) {
+  .app-content { max-width: 1100px; }
+}

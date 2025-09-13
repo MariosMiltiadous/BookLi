@@ -1,5 +1,7 @@
-.spacer { flex: 1 1 auto; }
 .mt { margin-top: 16px; }
-.table-wrap { overflow: auto; }
-table { width: 100%; }
-td, th { white-space: nowrap; }
+.list-toolbar { padding-inline: 12px; }
+.header-row { display: flex; align-items: center; gap: 16px; justify-content: space-between; }
+.filter-field { width: min(360px, 100%); }
+.table-wrap { overflow: auto; border-radius: 8px; }
+.actions > * { margin-right: 8px; }
+table { width: 100%; background: white; }

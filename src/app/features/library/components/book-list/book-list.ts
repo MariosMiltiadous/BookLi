@@ -1,25 +1,21 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+// src/app/features/library/components/book-list/book-list.component.ts
+import { Component, ChangeDetectionStrategy, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Router } from '@angular/router';
 import { BOOK_SERVICE } from '../../../../core/services/book.token';
 import { IBookService } from '../../../../core/services/book.service.contract';
-import { inject } from '@angular/core';
 import { NotificationsService } from '../../../../core/utils/notifications.service';
-
-// Material
-import { MAT_LIST_VIEW_IMPORTS } from '../../../../shared/material/material.imports';
-
-import { startWith } from 'rxjs/operators';
 import { IBook } from '../../../../core/models/book.interface';
+import { MAT_LIST_VIEW_IMPORTS } from '../../../../shared/material/material.imports';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   standalone: true,
   selector: 'app-book-list',
   imports: [
-    CommonModule,
-    RouterLink,
-    ...MAT_LIST_VIEW_IMPORTS
+    CommonModule, RouterLink,
+   ...MAT_LIST_VIEW_IMPORTS
   ],
   templateUrl: './book-list.html',
   styleUrls: ['./book-list.scss'],
@@ -29,24 +25,33 @@ export class BookList {
   private service = inject<IBookService>(BOOK_SERVICE as any);
   private notify = inject(NotificationsService);
 
-  // ensures first value is [], so async never yields null - 
-  books$ = this.service.list().pipe(startWith([] as IBook[]));
+  dataSource = new MatTableDataSource<IBook>([]);
   displayedColumns = ['title', 'author', 'year', 'genre', 'actions'];
 
-  constructor(private router: Router) {}
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  addNew() {
-    this.router.navigate(['/library/books/new']);
+  ngOnInit() {
+    this.service.list().subscribe(books => {
+      this.dataSource.data = books ?? [];
+      if (this.paginator) this.dataSource.paginator = this.paginator;
+    });
+    // optional: case-insensitive filtering over multiple fields
+    this.dataSource.filterPredicate = (b, f) =>
+      [b.title, b.author, b.genre, String(b.year)].some(x =>
+        (x ?? '').toLowerCase().includes(f.trim().toLowerCase()));
   }
+
+  applyFilter(value: string) {
+    this.dataSource.filter = value;
+    if (this.dataSource.paginator) this.dataSource.paginator.firstPage();
+  }
+
+  addNewLink = ['/library', 'books', 'new'];
 
   delete(id: string) {
     this.service.delete(id).subscribe({
       next: () => this.notify.success('Book deleted'),
       error: (e) => this.notify.error(e?.message ?? 'Delete failed'),
     });
-  }
-
-  edit(id: string) {
-    this.router.navigate(['/library/books', id]);
   }
 }

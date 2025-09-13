@@ -15,6 +15,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip'; 
+
 @NgModule({
   declarations: [App],
   imports: [
@@ -28,6 +30,7 @@ import { MatDividerModule } from '@angular/material/divider';
     MatIconModule,
     MatButtonModule,
     MatDividerModule,
+    MatTooltipModule 
   ],
   providers: [
     provideHttpClient(

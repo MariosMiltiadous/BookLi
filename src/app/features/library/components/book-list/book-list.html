@@ -1,17 +1,25 @@
-<mat-toolbar color="primary">
-  <span>📚 BookLi Library</span>
+<!-- src/app/features/library/components/book-list/book-list.component.html -->
+<mat-toolbar color="primary" class="list-toolbar">
+  <span><mat-icon>menu_book</mat-icon>&nbsp;BookLi Library</span>
   <span class="spacer"></span>
-  <a mat-button (click)="addNew()">
-    <mat-icon>add</mat-icon>
-    Add Book
+  <a mat-button [routerLink]="addNewLink">
+    <mat-icon>add</mat-icon> Add Book
   </a>
 </mat-toolbar>
 
 <mat-card class="mt">
-  <mat-card-title>Books</mat-card-title>
+  <div class="header-row">
+    <h2>Books</h2>
 
-  <div class="table-wrap">
-    <table mat-table [dataSource]="(books$ | async) ?? []" class="mat-elevation-z1">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Search books</mat-label>
+      <input matInput placeholder="Title, author, year, genre" (input)="applyFilter($any($event.target).value)">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="table-wrap mat-elevation-z1">
+    <table mat-table [dataSource]="dataSource">
 
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef> Title </th>
@@ -30,12 +38,14 @@
 
       <ng-container matColumnDef="genre">
         <th mat-header-cell *matHeaderCellDef> Genre </th>
-        <td mat-cell *matCellDef="let b"> {{ b.genre }} </td>
+        <td mat-cell *matCellDef="let b">
+          <mat-chip appearance="outlined" color="primary">{{ b.genre }}</mat-chip>
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let b">
+        <td mat-cell *matCellDef="let b" class="actions">
           <a mat-stroked-button color="primary" [routerLink]="['/library/books', b.id]">
             <mat-icon>edit</mat-icon> Edit
           </a>
@@ -45,8 +55,10 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
   </div>
+
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5,10,25]" showFirstLastButtons></mat-paginator>
 </mat-card>

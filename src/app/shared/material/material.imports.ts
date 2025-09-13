@@ -1,3 +1,6 @@
+// src/app/shared/material/material.imports.ts
+// Small, purposeful groups for standalone components.
+
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,8 +13,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatChipsModule } from '@angular/material/chips';
 
-// Tables (BookList)
+// Tables (core bits used across list views)
 export const MAT_TABLE_IMPORTS = [
   MatTableModule,
   MatPaginatorModule,
@@ -19,11 +23,18 @@ export const MAT_TABLE_IMPORTS = [
   MatButtonModule,
 ];
 
-// List view (BookList toolbar/card wrapper)
+// List view (BookList toolbar/card + search + chips)
 export const MAT_LIST_VIEW_IMPORTS = [
   ...MAT_TABLE_IMPORTS,
+  MatTableModule,
+  MatPaginatorModule,
+  MatIconModule,
+  MatButtonModule,
   MatToolbarModule,
   MatCardModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatChipsModule,
 ];
 
 // Forms (BookDetail)
