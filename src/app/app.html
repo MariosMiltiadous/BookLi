@@ -1,0 +1,38 @@
+<mat-sidenav-container autosize class="app-container">
+  <!-- Side nav -->
+  <mat-sidenav
+    #sidenav
+    class="app-sidenav"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) ? false : true">
+
+    <mat-toolbar>📚 BookLi</mat-toolbar>
+
+    <mat-nav-list>
+      <a mat-list-item routerLink="/library/books" (click)="closeOnMobile(sidenav)">Library</a>
+    </mat-nav-list>
+
+    <mat-divider></mat-divider>
+
+    <mat-nav-list>
+      <!-- Add more nav items here -->
+      <a mat-list-item href="https://angular.dev" target="_blank">Angular Docs</a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Main content -->
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="sidenav.toggle()" *ngIf="(isHandset$ | async)">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>BookLi</span>
+      <span class="spacer"></span>
+      <a mat-button routerLink="/library/books">Library</a>
+    </mat-toolbar>
+
+    <div class="app-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

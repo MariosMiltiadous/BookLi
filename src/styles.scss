@@ -1,0 +1,37 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// note for me to remember:
+// on the new Material (v20) theme API. 
+// In M3, the valid color keys are:
+// -theme-type
+// -primary
+// -tertiary
+
+$bookli-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,  
+    tertiary: mat.$rose-palette,   
+  
+  ),
+  typography: (
+    brand-family: 'Inter, Roboto, Arial, sans-serif',
+    bold-weight: 600
+  ),
+  density: (
+    scale: 0
+  )
+));
+
+:root {
+  @include mat.all-component-themes($bookli-theme);
+}
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: Inter, Roboto, Arial, sans-serif;
+  background: #fafafa;
+}
