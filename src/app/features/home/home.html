@@ -2,11 +2,11 @@
   <!-- Profile -->
   <mat-card class="profile">
     <mat-card-header>
-     <div class="avatar" [attr.data-initials]="user.avatarUrl ? null : initials">
-                         @if (user.avatarUrl) {
-                <img [src]="user.avatarUrl" [alt]="user.name" />
-            }
-            </div>
+      <div class="avatar" [attr.data-initials]="user.avatarUrl ? null : initials">
+        @if (user.avatarUrl) {
+        <img [src]="user.avatarUrl" [alt]="user.name" />
+        }
+      </div>
       <div class="header-text">
         <mat-card-title>Welcome back, {{ user.name }}</mat-card-title>
         <mat-card-subtitle>{{ user.role }} • Member since {{ user.memberSince }}</mat-card-subtitle>
@@ -37,9 +37,14 @@
       <div class="chips-wrap">
         <span class="label">Favorite genres:</span>
         <mat-chip-set>
-          <mat-chip appearance="outlined" color="primary" *ngFor="let g of user.favoriteGenres">{{ g }}</mat-chip>
+          @for (g of user.favoriteGenres; track g) {
+          <mat-chip appearance="outlined" color="primary">{{ g }}</mat-chip>
+          } @empty {
+          <mat-chip disabled>None yet</mat-chip>
+          }
         </mat-chip-set>
       </div>
+      >
     </mat-card-content>
   </mat-card>
 
@@ -52,10 +57,15 @@
     <mat-card-content>
       <ul class="bullets">
         <li><strong>Standalone</strong> components + lazy-loaded <code>LibraryModule</code>.</li>
-        <li>Clean <strong>DI</strong> with an <code>InjectionToken</code> to swap data services (In-Memory / HTTP).</li>
+        <li>
+          Clean <strong>DI</strong> with an <code>InjectionToken</code> to swap data services
+          (In-Memory / HTTP).
+        </li>
         <li><strong>Reactive Forms</strong>, resolver-based prefetch for edit routes.</li>
         <li>Functional <strong>HTTP interceptors</strong> for API prefix & error handling.</li>
-        <li>UX with Angular <strong>Material</strong>: table, chips, toolbar, sidenav, snackbars.</li>
+        <li>
+          UX with Angular <strong>Material</strong>: table, chips, toolbar, sidenav, snackbars.
+        </li>
         <li>Type-safe, non-nullable forms and strict template checks.</li>
       </ul>
       <a mat-raised-button color="primary" routerLink="/library/books">

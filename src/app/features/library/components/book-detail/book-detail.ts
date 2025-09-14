@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BOOK_SERVICE } from '../../../../core/services/book.token';
-import { IBookService } from '../../../../core/services/book.service.contract';
+import { IBookService } from '../../../../core/services/book.service.interface';
 import { NotificationsService } from '../../../../core/utils/notifications.service';
 
 import { MAT_FORM_IMPORTS } from '../../../../shared/material/material.imports';

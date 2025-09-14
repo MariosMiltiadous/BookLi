@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, ViewChild, inject } from '@angular/
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BOOK_SERVICE } from '../../../../core/services/book.token';
-import { IBookService } from '../../../../core/services/book.service.contract';
+import { IBookService } from '../../../../core/services/book.service.interface';
 import { NotificationsService } from '../../../../core/utils/notifications.service';
 import { IBook } from '../../../../core/models/book.interface';
 import { MAT_LIST_VIEW_IMPORTS } from '../../../../shared/material/material.imports';
@@ -13,10 +13,7 @@ import { MatPaginator } from '@angular/material/paginator';
 @Component({
   standalone: true,
   selector: 'app-book-list',
-  imports: [
-    CommonModule, RouterLink,
-   ...MAT_LIST_VIEW_IMPORTS
-  ],
+  imports: [CommonModule, RouterLink, ...MAT_LIST_VIEW_IMPORTS],
   templateUrl: './book-list.html',
   styleUrls: ['./book-list.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,18 +24,20 @@ export class BookList {
 
   dataSource = new MatTableDataSource<IBook>([]);
   displayedColumns = ['title', 'author', 'year', 'genre', 'actions'];
+  filterValue = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit() {
-    this.service.list().subscribe(books => {
+    this.service.list().subscribe((books) => {
       this.dataSource.data = books ?? [];
       if (this.paginator) this.dataSource.paginator = this.paginator;
     });
     // optional: case-insensitive filtering over multiple fields
     this.dataSource.filterPredicate = (b, f) =>
-      [b.title, b.author, b.genre, String(b.year)].some(x =>
-        (x ?? '').toLowerCase().includes(f.trim().toLowerCase()));
+      [b.title, b.author, b.genre, String(b.year)].some((x) =>
+        (x ?? '').toLowerCase().includes(f.trim().toLowerCase())
+      );
   }
 
   applyFilter(value: string) {
@@ -53,5 +52,15 @@ export class BookList {
       next: () => this.notify.success('Book deleted'),
       error: (e) => this.notify.error(e?.message ?? 'Delete failed'),
     });
+  }
+
+  onFilterInput(e: Event) {
+    const value = (e.target as HTMLInputElement).value ?? '';
+    this.filterValue = value;
+    this.applyFilter(value);
+  }
+  clearFilter() {
+    this.filterValue = '';
+    this.applyFilter('');
   }
 }

@@ -1,23 +1,49 @@
-<!-- src/app/features/library/components/book-list/book-list.component.html -->
 <mat-toolbar color="primary" class="list-toolbar">
   <span><mat-icon>menu_book</mat-icon>&nbsp;BookLi Library</span>
   <span class="spacer"></span>
-  <a mat-button [routerLink]="addNewLink">
-    <mat-icon>add</mat-icon> Add Book
-  </a>
+
+  <button
+    mat-raised-button
+    class="add-btn"
+    [routerLink]="addNewLink"
+    aria-label="Add a new book"
+    [matTooltip]="'Add a new book (A)'"
+  >
+    <mat-icon>add</mat-icon>
+    <span>Add Book</span>
+  </button>
 </mat-toolbar>
 
-<mat-card class="mt">
+<!-- Header section (separate card) -->
+<mat-card class="section header-card">
   <div class="header-row">
-    <h2>Books</h2>
+    <div class="title-wrap">
+      <mat-icon class="title-icon">menu_book</mat-icon>
+      <h2 class="title">Books</h2>
+      <span class="count-pill">{{ dataSource.filteredData.length }} total</span>
+    </div>
 
-    <mat-form-field appearance="outline" class="filter-field">
+    <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
       <mat-label>Search books</mat-label>
-      <input matInput placeholder="Title, author, year, genre" (input)="applyFilter($any($event.target).value)">
-      <mat-icon matSuffix>search</mat-icon>
+      <input
+        matInput
+        [value]="filterValue"
+        placeholder="Title, author, year, genre"
+        (input)="onFilterInput($event)"
+      />
+      @if (filterValue) {
+        <button mat-icon-button matSuffix aria-label="Clear search" (click)="clearFilter()">
+          <mat-icon>close</mat-icon>
+        </button>
+      } @else {
+        <mat-icon matSuffix>search</mat-icon>
+      }
     </mat-form-field>
   </div>
+</mat-card>
 
+<!-- Table section (own card) -->
+<mat-card class="section table-card">
   <div class="table-wrap mat-elevation-z1">
     <table mat-table [dataSource]="dataSource">
 
