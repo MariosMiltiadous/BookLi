@@ -10,10 +10,13 @@ import { MAT_LIST_VIEW_IMPORTS } from '../../../../shared/material/material.impo
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDeleteDialog } from '../../../../shared/ui-components/confirm-delete.dialog';
+
 @Component({
   standalone: true,
   selector: 'app-book-list',
-  imports: [CommonModule, RouterLink, ...MAT_LIST_VIEW_IMPORTS],
+  imports: [CommonModule, RouterLink, ...MAT_LIST_VIEW_IMPORTS, MatDialogModule],
   templateUrl: './book-list.html',
   styleUrls: ['./book-list.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +24,7 @@ import { MatPaginator } from '@angular/material/paginator';
 export class BookList {
   private service = inject<IBookService>(BOOK_SERVICE as any);
   private notify = inject(NotificationsService);
+  private dialog = inject(MatDialog);
 
   dataSource = new MatTableDataSource<IBook>([]);
   displayedColumns = ['title', 'author', 'year', 'genre', 'actions'];
@@ -33,25 +37,17 @@ export class BookList {
       this.dataSource.data = books ?? [];
       if (this.paginator) this.dataSource.paginator = this.paginator;
     });
-    // optional: case-insensitive filtering over multiple fields
+
+    // Case-insensitive filtering over multiple fields
     this.dataSource.filterPredicate = (b, f) =>
-      [b.title, b.author, b.genre, String(b.year)].some((x) =>
-        (x ?? '').toLowerCase().includes(f.trim().toLowerCase())
-      );
+      [b.title, b.author, b.genre, String(b.year)]
+        .some(x => (x ?? '').toLowerCase().includes((f ?? '').toLowerCase()));
   }
 
+  // ——— Filtering helpers ———
   applyFilter(value: string) {
-    this.dataSource.filter = value;
-    if (this.dataSource.paginator) this.dataSource.paginator.firstPage();
-  }
-
-  addNewLink = ['/library', 'books', 'new'];
-
-  delete(id: string) {
-    this.service.delete(id).subscribe({
-      next: () => this.notify.success('Book deleted'),
-      error: (e) => this.notify.error(e?.message ?? 'Delete failed'),
-    });
+    this.dataSource.filter = (value ?? '').trim().toLowerCase();
+    this.dataSource.paginator?.firstPage();
   }
 
   onFilterInput(e: Event) {
@@ -59,8 +55,33 @@ export class BookList {
     this.filterValue = value;
     this.applyFilter(value);
   }
+
   clearFilter() {
     this.filterValue = '';
     this.applyFilter('');
+  }
+
+  // ——— Navigation ———
+  addNewLink = ['/library', 'books', 'new'];
+
+  // ——— Delete flow with confirm dialog ———
+  confirmDelete(b: IBook) {
+    const ref = this.dialog.open(ConfirmDeleteDialog, {
+      data: { title: b.title },
+      width: '420px',
+      maxWidth: '90vw',
+      disableClose: false
+    });
+
+    ref.afterClosed().subscribe(yes => {
+      if (yes) this.delete(b.id);
+    });
+  }
+
+  private delete(id: string) {
+    this.service.delete(id).subscribe({
+      next: () => this.notify.success('Book deleted'),
+      error: (e) => this.notify.error(e?.message ?? 'Delete failed'),
+    });
   }
 }

@@ -75,7 +75,7 @@
           <a mat-stroked-button color="primary" [routerLink]="['/library/books', b.id]">
             <mat-icon>edit</mat-icon> Edit
           </a>
-          <button mat-stroked-button color="warn" (click)="delete(b.id)">
+          <button mat-stroked-button color="warn" (click)="confirmDelete(b)">
             <mat-icon>delete</mat-icon> Delete
           </button>
         </td>
