@@ -2,12 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
 import { IBook } from '../models/book.interface';
-import { IBookService } from './book.service.contract';
+import { IBookService } from './book.service.interface';
 import { BOOKS_SEED } from './book.token';
 
 @Injectable()
 export class InMemoryBookService implements IBookService {
-  private readonly latency = 1500;
+  private readonly latency = 150;
   private readonly seed = inject(BOOKS_SEED);
 
   private store = new BehaviorSubject<IBook[]>(

@@ -1,5 +1,5 @@
 import { InjectionToken } from '@angular/core';
-import { IBookService } from './book.service.contract';
+import { IBookService } from './book.service.interface';
 import { IBook } from '../models/book.interface';
 
 export const BOOK_SERVICE = new InjectionToken<IBookService>('BOOK_SERVICE');

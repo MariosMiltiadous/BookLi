@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { IBook } from '../../core/models/book.interface';
+import { IBook } from '../models/book.interface';
 
 export abstract class IBookService {
   abstract list(params?: { page?: number; pageSize?: number }): Observable<IBook[]>;

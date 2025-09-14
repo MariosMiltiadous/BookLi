@@ -3,7 +3,6 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot, convertToParamMap } from '
 import { bookResolver } from './book.resolver';
 import { BOOK_SERVICE } from '../../../core/services/book.token';
 import { InMemoryBookService } from '../../../core/services/book.service.inmemory';
-import { IBookService } from '../../../core/services/book.service.contract';
 
 describe('bookResolver', () => {
   beforeEach(() => {
