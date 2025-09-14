@@ -3,13 +3,18 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: '',
+    loadComponent: () =>
+      import('./features/home/home').then(c => c.Home),
+  },
+  {
     path: 'library',
     loadChildren: () =>
       import('./features/library/library.module').then(m => m.LibraryModule),
   },
-  { path: '', pathMatch: 'full', redirectTo: 'library' },
-  { path: '**', redirectTo: 'library' },
+  { path: '**', redirectTo: '' },
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

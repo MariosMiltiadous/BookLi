@@ -5,17 +5,18 @@
       <mat-form-field appearance="outline">
         <mat-label>Title</mat-label>
         <input matInput formControlName="title" />
-        <mat-error *ngIf="form.controls.title.invalid && form.controls.title.touched">
-          Title is required
-        </mat-error>
+        @if (form.controls.title.hasError('required') && (form.controls.title.touched ||
+        form.controls.title.dirty)) {
+        <mat-error>Title is required</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <mat-label>Author</mat-label>
         <input matInput formControlName="author" />
-        <mat-error *ngIf="form.controls.author.invalid && form.controls.author.touched">
-          Author is required
-        </mat-error>
+        @if(form.controls.author.invalid && form.controls.author.touched){
+        <mat-error> Author is required </mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -31,9 +32,9 @@
           <mat-option value="Non-fiction">Non-fiction</mat-option>
           <mat-option value="Science">Science</mat-option>
         </mat-select>
-        <mat-error *ngIf="form.controls.genre.invalid && form.controls.genre.touched">
-          Genre is required
-        </mat-error>
+        @if(form.controls.genre.invalid && form.controls.genre.touched){
+        <mat-error> Genre is required </mat-error>
+        }
       </mat-form-field>
 
       <div class="actions">

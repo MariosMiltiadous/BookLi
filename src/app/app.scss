@@ -15,26 +15,27 @@ $app-sidenav-rail: 90px;
   border-right: 1px solid #e5e7eb;   /* thin separator */
   width: $app-sidenav-width;
   transition: width 200ms ease;
+  overflow: hidden;                  /* prevent content peeking when collapsed */
 }
 .app-sidenav.collapsed { width: $app-sidenav-rail; }
 
-/* Toolbar styling to blend with grey rail */
-.side-toolbar {
+/* Rail header (works for .rail-header or legacy .side-toolbar) */
+.rail-header, .side-toolbar {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 10px;                 /* more breathing room */
+  padding: 8px 10px;
   background: transparent;
   box-shadow: none;
   position: sticky; top: 0; z-index: 2; /* keep toggle visible when scrolling */
 }
 
-/* Hide labels in mini-variant, keep icons/logo */
+/* Hide labels in mini-variant, keep icon/logo */
 .app-sidenav.collapsed .brand,
 .app-sidenav.collapsed .nav-label { display: none; }
 
 /* Toggle button: make it pop on collapsed rail */
-.collapse-btn { margin-left: auto; }           /* push button to the right */
+.collapse-btn { margin-left: auto; }
 .app-sidenav.collapsed .collapse-btn {
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -42,12 +43,32 @@ $app-sidenav-rail: 90px;
   border-radius: 50%;
 }
 .app-sidenav.collapsed .collapse-btn mat-icon {
-  color: #1976d2; /* or your theme primary */
+  color: #1976d2; /* theme primary */
 }
 
-/* List item density tweaks (Material 3 variables) */
-::ng-deep .mat-mdc-list-item {
+/* List item spacing & density (MDC) */
+:host ::ng-deep .mat-mdc-list-item {
   --mdc-list-list-item-one-line-container-height: 44px;
+  border-radius: 8px;
+  margin: 2px 6px;
+}
+:host ::ng-deep .mat-mdc-list-item .mdc-list-item__start { margin-right: 10px; }
+
+/* Center icons when collapsed, remove extra content spacing */
+:host ::ng-deep .app-sidenav.collapsed .mat-mdc-list-item {
+  justify-content: center;
+  margin: 6px 0;
+  padding-inline: 0;
+}
+:host ::ng-deep .app-sidenav.collapsed .mat-mdc-list-item .mdc-list-item__start { margin-right: 0; }
+:host ::ng-deep .app-sidenav.collapsed .mat-mdc-list-item .mdc-list-item__content { display: none; }
+
+/* Active nav state */
+:host ::ng-deep .mat-mdc-list-item.active {
+  background: #e7f0fb;
+}
+:host ::ng-deep .mat-mdc-list-item.active mat-icon {
+  color: #1976d2;
 }
 
 /* Top bar spacing */
