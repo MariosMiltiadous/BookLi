@@ -9,13 +9,7 @@ import { apiPrefixInterceptor } from './core/interceptors/api-prefix.interceptor
 import { httpErrorInterceptor } from './core/interceptors/http-error.interceptor';
 
 // Material for the shell:
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatTooltipModule } from '@angular/material/tooltip'; 
+import { MAT_SHELL_IMPORTS } from '../app/shared/material/material.imports'
 
 @NgModule({
   declarations: [App],
@@ -23,14 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     BrowserModule,
     CoreModule,
     AppRoutingModule,
-    // Material
-    MatSidenavModule,
-    MatToolbarModule,
-    MatListModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDividerModule,
-    MatTooltipModule 
+    ...MAT_SHELL_IMPORTS,
   ],
   providers: [
     provideHttpClient(
