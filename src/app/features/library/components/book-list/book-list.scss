@@ -97,3 +97,10 @@ table { width: 100%; background: white; }
   padding-inline: 14px;
 }
 
+.empty-row td { padding: 24px; background: #fff; }
+.empty-state {
+  display: grid; justify-items: center; gap: 8px; color: #607d8b;
+}
+.empty-state mat-icon { font-size: 28px; height: 28px; width: 28px; opacity: .7; }
+
+

@@ -7,8 +7,7 @@
     class="add-btn"
     [routerLink]="addNewLink"
     aria-label="Add a new book"
-    [matTooltip]="'Add a new book (A)'"
-  >
+    [matTooltip]="'Add a new book (A)'">
     <mat-icon>add</mat-icon>
     <span>Add Book</span>
   </button>
@@ -29,8 +28,7 @@
         matInput
         [value]="filterValue"
         placeholder="Title, author, year, genre"
-        (input)="onFilterInput($event)"
-      />
+        (input)="onFilterInput($event)" />
       @if (filterValue) {
         <button mat-icon-button matSuffix aria-label="Clear search" (click)="clearFilter()">
           <mat-icon>close</mat-icon>
@@ -40,6 +38,11 @@
       }
     </mat-form-field>
   </div>
+
+  <!-- slim loading bar aligned with Option C's `loading` flag -->
+  @if (loading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
 </mat-card>
 
 <!-- Table section (own card) -->
@@ -83,6 +86,23 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Empty state row (spans all columns) -->
+      @if (!loading && dataSource.filteredData.length === 0) {
+        <tr class="empty-row">
+          <td [attr.colspan]="displayedColumns.length">
+            <div class="empty-state">
+              <mat-icon>search_off</mat-icon>
+              <div>No books found</div>
+              @if (filterValue) {
+                <button mat-stroked-button (click)="clearFilter()">
+                  Clear filter
+                </button>
+              }
+            </div>
+          </td>
+        </tr>
+      }
     </table>
   </div>
 

@@ -14,6 +14,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 // Tables (core bits used across list views)
 export const MAT_TABLE_IMPORTS = [
@@ -31,7 +32,8 @@ export const MAT_LIST_VIEW_IMPORTS = [
   MatFormFieldModule,
   MatInputModule,
   MatChipsModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatProgressBarModule
 ];
 
 // Forms (BookDetail)
