@@ -1,59 +1,52 @@
-# Bookli
+# 📚 BookLi
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.1.
 
-## Development server
+## 🚀 Quick Start
 
-To start a local development server, run:
-
+# For local development insall modules: npm install
 ```bash
+# 1) Start the mock API (json-server) on http://localhost:3000
+npm run api
+
+# 2) In another terminal start the Angular dev server (with proxy)
 ng serve
-```
+# or run both together:
+npm run dev
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+🧪 Mock Backend (Development Only)
 
-## Code scaffolding
+The app uses a lightweight json-server to persist CRUD across reloads.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+How it’s wired
 
-```bash
-ng generate component component-name
-```
+Mock data: mock/db.json
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Dev proxy: src/proxy.conf.json rewrites /api/* → http://localhost:3000/* (no CORS)
 
-```bash
-ng generate --help
-```
+Environment: environment.apiBaseUrl = '/api'
 
-## Building
+Interceptor: apiPrefixInterceptor turns relative paths (e.g., '/books') into '/api/books'
 
-To build the project run:
+HTTP service: HttpBookService performs real HTTP calls (GET/POST/PATCH/DELETE)
 
-```bash
-ng build
-```
+Verify it works
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+http://localhost:3000/books → JSON array from mock/db.json
 
-## Running unit tests
+http://localhost:4200/api/books → same data via Angular proxy
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 
-```bash
-ng test
-```
+📎 File Map (mock & http)
 
-## Running end-to-end tests
 
-For end-to-end (e2e) testing, run:
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
 ## Additional Resources
+📚 Resources
+
+- Angular CLI Docs: https://angular.dev/tools/cli
+- Angular Material: https://material.angular.io/
+- json-server: https://github.com/typicode/json-server
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

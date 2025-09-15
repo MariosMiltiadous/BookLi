@@ -9,6 +9,7 @@ import { NotificationsService } from './utils/notifications.service';
   providers: [
     NotificationsService,
     { provide: BOOK_SERVICE, useClass: HttpBookService },
+    // { provide: BOOKS_SEED,   useValue: DEFAULT_BOOKS_SEED }, -> only for unit test
   ],
 })
 export class CoreModule {

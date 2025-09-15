@@ -1,4 +1,3 @@
-// src/app/features/library/components/book-list/book-list.component.ts
 import { Component, ChangeDetectionStrategy, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
