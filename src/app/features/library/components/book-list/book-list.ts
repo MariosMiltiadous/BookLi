@@ -28,7 +28,7 @@ export class BookList {
   private service = inject<IBookService>(BOOK_SERVICE as any);
   private notify = inject(NotificationsService);
   private dialog = inject(MatDialog);
-private destroyRef = inject(DestroyRef);
+  private destroyRef = inject(DestroyRef);
 
   dataSource = new MatTableDataSource<IBook>([]);
   displayedColumns = ['title', 'author', 'year', 'genre', 'actions'];
@@ -43,18 +43,19 @@ private destroyRef = inject(DestroyRef);
   ngOnInit() {
     // multi-field, case-insensitive filter
     this.dataSource.filterPredicate = (b, f) =>
-      [b.title, b.author, b.genre, String(b.year)]
-        .some(x => (x ?? '').toLowerCase().includes((f ?? '').toLowerCase()));
+      [b.title, b.author, b.genre, String(b.year)].some((x) =>
+        (x ?? '').toLowerCase().includes((f ?? '').toLowerCase())
+      );
 
     // stream to load data on init + whenever reload$ emits
     this.reload$
       .pipe(
-        startWith(void 0),                 // initial load
+        startWith(void 0), // initial load
         tap(() => (this.loading = true)),
         // if a second reload happens before the first finishes, the first is cancelled (avoids race conditions and stale updates).
         switchMap(() =>
           this.service.list().pipe(
-            catchError(err => {
+            catchError((err) => {
               this.notify.error(err?.message ?? 'Load failed');
               return of([] as IBook[]);
             }),
@@ -63,7 +64,7 @@ private destroyRef = inject(DestroyRef);
         ),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(books => {
+      .subscribe((books) => {
         this.dataSource.data = books ?? [];
         // keep current client-side filter applied
         this.dataSource.filter = (this.filterValue ?? '').trim().toLowerCase();
@@ -103,14 +104,18 @@ private destroyRef = inject(DestroyRef);
       disableClose: false,
     });
 
-    ref.afterClosed()
+    ref
+      .afterClosed()
       .pipe(
         filter(Boolean), // proceed only if user confirmed
         switchMap(() => this.service.delete(b.id)),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
-        next: () => { this.notify.success('Book deleted'); this.reload$.next(); },
+        next: () => {
+          this.notify.success('Book deleted');
+          this.reload$.next();
+        },
         error: (e) => this.notify.error(e?.message ?? 'Delete failed'),
       });
   }

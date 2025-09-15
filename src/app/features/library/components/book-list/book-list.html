@@ -75,7 +75,7 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let b" class="actions">
-          <a mat-stroked-button color="primary" [routerLink]="['/library/books', b.id]">
+          <a mat-stroked-button color="primary" [routerLink]="['/library','books', b.id]">
             <mat-icon>edit</mat-icon> Edit
           </a>
           <button mat-stroked-button color="warn" (click)="confirmDelete(b)">
