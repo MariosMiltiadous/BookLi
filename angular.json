@@ -69,7 +69,8 @@
               "buildTarget": "bookli:build:production"
             },
             "development": {
-              "buildTarget": "bookli:build:development"
+              "buildTarget": "bookli:build:development",
+              "proxyConfig": "src/proxy.conf.json" 
             }
           },
           "defaultConfiguration": "development"
