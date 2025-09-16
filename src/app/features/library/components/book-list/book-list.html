@@ -48,11 +48,11 @@
   </div>
   }
 
-  <div class="cards-grid">
-    @for (b of filtered; track b.id) {
+<div class="cards-grid">
+  @for (b of filtered; track b.id) {
     <mat-card class="book-card mat-elevation-z2">
       <div class="media-wrap" [class.loading]="!isImageLoaded(b.id)">
-        <img [src]="b.imageUrl || coverFor(b) || 'assets/covers/placeholder.jpg'" [class.loaded]="isImageLoaded(b.id)"
+        <img [src]="b.imageUrl || getPlaceholderFor(b)" [class.loaded]="isImageLoaded(b.id)"
           (load)="onImageLoad(b.id)" (error)="onCoverError(b)" [alt]="b.title" loading="lazy" />
       </div>
 
@@ -74,6 +74,6 @@
         </button>
       </mat-card-actions>
     </mat-card>
-    }
-  </div>
+  }
+</div>
 </mat-card>

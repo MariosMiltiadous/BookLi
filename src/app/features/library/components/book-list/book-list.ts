@@ -1,4 +1,3 @@
-// src/app/features/library/components/book-list/book-list.component.ts
 import { Component, ChangeDetectionStrategy, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -26,9 +25,8 @@ export class BookList {
   private service = inject<IBookService>(BOOK_SERVICE as any);
   private notify = inject(NotificationsService);
   private dialog = inject(MatDialog);
-    private destroyRef = inject(DestroyRef);
- // Angular doesn't automatically detect changes when you update properties like loading = false - it only checks when inputs change
-  private cdr = inject(ChangeDetectorRef); // 🔧 Added ChangeDetectorRef - so I had to manually trigger change detection 
+  private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef); // 🔧 Added ChangeDetectorRef
 
   // Data for card view
   books: IBook[] = [];
@@ -66,6 +64,7 @@ export class BookList {
       )
       .subscribe(books => {
         this.books = books ?? [];
+        this.resetImageStates(); // Clear image loading states for new data
         this.applyFilter(this.filterValue); // keep current filter applied
         this.cdr.markForCheck(); // 🔧 Trigger change detection when data arrives
       });
@@ -79,6 +78,7 @@ export class BookList {
       [b.title, b.author, b.genre, String(b.year)]
         .some(x => (x ?? '').toLowerCase().includes(f))
     );
+    // No need for markForCheck here since this is usually called from user input events
   }
 
   onFilterInput(e: Event) {
@@ -120,6 +120,33 @@ export class BookList {
   // ——— Image loading state management ———
   private loadedImages = new Set<string>();
 
+  // Default placeholder image (no file needed)
+  defaultPlaceholder = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400' width='300' height='400'>
+      <defs>
+        <linearGradient id='bookGrad' x1='0%' y1='0%' x2='100%' y2='100%'>
+          <stop offset='0%' stop-color='#f8fafc'/>
+          <stop offset='100%' stop-color='#e2e8f0'/>
+        </linearGradient>
+      </defs>
+      <rect width='300' height='400' fill='url(#bookGrad)' stroke='#cbd5e1' stroke-width='2' rx='8'/>
+      <rect x='20' y='30' width='260' height='2' fill='#94a3b8' rx='1'/>
+      <rect x='20' y='50' width='200' height='2' fill='#cbd5e1' rx='1'/>
+      <rect x='20' y='70' width='180' height='2' fill='#e2e8f0' rx='1'/>
+      
+      <!-- Book icon -->
+      <g transform='translate(125, 180)' fill='#94a3b8'>
+        <path d='M-20-20h40v40h-40z' fill='none' stroke='#94a3b8' stroke-width='2' rx='4'/>
+        <path d='M-15-15h30M-15-8h25M-15-1h28M-15 6h22M-15 13h26' stroke='#cbd5e1' stroke-width='1.5'/>
+      </g>
+      
+      <text x='150' y='280' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
+            font-size='14' fill='#64748b' font-weight='500'>No Cover Available</text>
+      <text x='150' y='300' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
+            font-size='12' fill='#94a3b8'>Click to edit book details</text>
+    </svg>
+  `);
+
   isImageLoaded(bookId: string): boolean {
     return this.loadedImages.has(bookId);
   }
@@ -141,21 +168,70 @@ export class BookList {
     return this.coverCache[b.id] ?? `assets/covers/${b.id}.jpg`; 
   }
 
+  // Generate a personalized placeholder with book title and author
+  getPlaceholderFor(b: IBook): string {
+    // Check if we already generated a placeholder for this book
+    const cacheKey = `placeholder_${b.id}`;
+    if (this.coverCache[cacheKey]) {
+      return this.coverCache[cacheKey];
+    }
+
+    // Create personalized placeholder
+    const title = (b.title || 'Untitled Book').slice(0, 24);
+    const author = (b.author || 'Unknown Author').slice(0, 20);
+    const year = b.year || '';
+    
+    const placeholder = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400' width='300' height='400'>
+        <defs>
+          <linearGradient id='bookGrad${b.id}' x1='0%' y1='0%' x2='100%' y2='100%'>
+            <stop offset='0%' stop-color='#f8fafc'/>
+            <stop offset='100%' stop-color='#e2e8f0'/>
+          </linearGradient>
+        </defs>
+        <rect width='300' height='400' fill='url(#bookGrad${b.id})' stroke='#cbd5e1' stroke-width='2' rx='8'/>
+        <rect x='20' y='30' width='260' height='2' fill='#94a3b8' rx='1'/>
+        <rect x='20' y='50' width='200' height='2' fill='#cbd5e1' rx='1'/>
+        <rect x='20' y='70' width='180' height='2' fill='#e2e8f0' rx='1'/>
+        
+        <!-- Book icon -->
+        <g transform='translate(150, 120)' fill='#94a3b8'>
+          <rect x='-20' y='-15' width='40' height='30' fill='none' stroke='#94a3b8' stroke-width='2' rx='3'/>
+          <line x1='-15' y1='-10' x2='10' y2='-10' stroke='#cbd5e1' stroke-width='1'/>
+          <line x1='-15' y1='-5' x2='15' y2='-5' stroke='#cbd5e1' stroke-width='1'/>
+          <line x1='-15' y1='0' x2='8' y2='0' stroke='#cbd5e1' stroke-width='1'/>
+          <line x1='-15' y1='5' x2='12' y2='5' stroke='#cbd5e1' stroke-width='1'/>
+          <line x1='-15' y1='10' x2='6' y2='10' stroke='#cbd5e1' stroke-width='1'/>
+        </g>
+        
+        <!-- Book title -->
+        <text x='150' y='200' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
+              font-size='16' fill='#1f2937' font-weight='600'>${title}</text>
+        
+        <!-- Author -->
+        <text x='150' y='225' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
+              font-size='13' fill='#6b7280' font-weight='500'>${author}</text>
+              
+        <!-- Year -->
+        ${year ? `<text x='150' y='245' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
+              font-size='11' fill='#9ca3af'>${year}</text>` : ''}
+        
+        <!-- Footer text -->
+        <text x='150' y='320' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
+              font-size='11' fill='#9ca3af'>No cover image</text>
+        <text x='150' y='340' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
+              font-size='10' fill='#d1d5db'>Click to edit details</text>
+      </svg>
+    `);
+
+    // Cache the generated placeholder
+    this.coverCache[cacheKey] = placeholder;
+    return placeholder;
+  }
+
   onCoverError(b: IBook) {
     // Mark as loaded even on error to stop shimmer
     this.onImageLoad(b.id);
-    
-    // fallback to simple SVG placeholder
-    const txt = encodeURIComponent(b.title?.slice(0, 22) ?? 'Book');
-    const sub = encodeURIComponent(b.author ?? '');
-    this.coverCache[b.id] =
-      'data:image/svg+xml;utf8,' +
-      `<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360'>
-        <rect width='100%' height='100%' fill='%23f1f3f5'/>
-        <text x='50%' y='48%' dominant-baseline='middle' text-anchor='middle'
-              font-family='Inter, Roboto, Arial' font-size='28' fill='%23374151'>${txt}</text>
-        <text x='50%' y='62%' dominant-baseline='middle' text-anchor='right'
-              font-family='Inter, Roboto, Arial' font-size='16' fill='%236b7280'>${sub}</text>
-      </svg>`;
+    // That's it! Let defaultPlaceholder handle the rest
   }
 }
