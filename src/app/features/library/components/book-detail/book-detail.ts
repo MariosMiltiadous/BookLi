@@ -36,6 +36,7 @@ export class BookDetail {
     author: ['', Validators.required],
     year: [new Date().getFullYear(), [Validators.required, Validators.min(0)]],
     genre: ['', Validators.required],
+    imageUrl:['']
   });
 
   ngOnInit(): void {
@@ -53,6 +54,7 @@ export class BookDetail {
           author: book.author,
           year: book.year,
           genre: book.genre,
+          imageUrl: book.imageUrl
         });
       } else {
         // create mode: reset sensible defaults
@@ -61,6 +63,7 @@ export class BookDetail {
           author: '',
           year: new Date().getFullYear(),
           genre: '',
+          imageUrl:''
         });
       }
     });

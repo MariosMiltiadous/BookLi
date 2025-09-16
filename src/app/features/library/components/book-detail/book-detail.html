@@ -37,6 +37,11 @@
         }
       </mat-form-field>
 
+      <mat-form-field appearance="outline">
+        <mat-label>Image Url</mat-label>
+        <input matInput formControlName="imageUrl" />
+      </mat-form-field>
+
       <div class="actions">
         <button mat-raised-button color="primary" type="submit">
           <mat-icon>save</mat-icon> {{ isEdit ? 'Update' : 'Create' }}
