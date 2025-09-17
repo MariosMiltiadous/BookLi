@@ -1,27 +1,41 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { IBook } from '../models/book.interface';
 import { IBookService } from './book.service.interface';
 
 @Injectable()
 export class HttpBookService implements IBookService {
   private http = inject(HttpClient);
+  private readonly base = '/books'; // Proxy will convert to http://localhost:3000/books
 
-  // apiPrefixInterceptor will prepend environment base (e.g. '/api')
-  private readonly base = '/books';
-
-  // Optional: server-side pagination + search
-  list(params?: { page?: number; pageSize?: number; q?: string }): Observable<IBook[]> {
-    let httpParams = new HttpParams();
-    if (params?.page && params?.pageSize) {
-      httpParams = httpParams
-        .set('_page', String(params.page))
-        .set('_limit', String(params.pageSize));
+  list(params?: {
+    page?: number;
+    pageSize?: number;
+    q?: string;
+  }): Observable<{ books: IBook[]; total: number }> {
+    // Always get all data first
+    let searchParams = new HttpParams();
+    if (params?.q) {
+      searchParams = searchParams.set('q', params.q);
     }
-    if (params?.q) httpParams = httpParams.set('q', params.q);
 
-    return this.http.get<IBook[]>(this.base, { params: httpParams });
+    return this.http.get<IBook[]>(this.base, { params: searchParams }).pipe(
+      map((allBooks) => {
+        const total = allBooks.length;
+
+        // Apply client-side pagination if parameters provided
+        let books = allBooks;
+        if (params?.page && params?.pageSize) {
+          const startIndex = (params.page - 1) * params.pageSize;
+          const endIndex = startIndex + params.pageSize;
+          books = allBooks.slice(startIndex, endIndex);
+        }
+
+        return { books, total };
+      })
+    );
   }
 
   getById(id: string): Observable<IBook> {
@@ -33,12 +47,10 @@ export class HttpBookService implements IBookService {
   }
 
   update(id: string, changes: Partial<IBook>): Observable<IBook> {
-    // Partial updates align with your interface/contract
     return this.http.patch<IBook>(`${this.base}/${id}`, changes);
   }
 
   delete(id: string): Observable<void> {
-    // json-server returns {} by default; typing as void is fine
     return this.http.delete<void>(`${this.base}/${id}`);
   }
 }

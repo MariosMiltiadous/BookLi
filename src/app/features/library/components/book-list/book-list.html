@@ -27,84 +27,106 @@
         <mat-icon>menu_book</mat-icon>
         Books
       </h2>
-      <span class="count-pill">{{ filtered.length }} total</span>
+      <span class="count-pill">{{ totalBooks }} total</span>
     </div>
 
-    <!-- Search Field -->
+    <!-- Search Field - Now using Reactive Forms -->
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Search books</mat-label>
       <input
         matInput
-        [value]="filterValue"
+        [formControl]="searchControl"
         placeholder="Title, author, genre..."
-        (input)="onFilterInput($event)"
       />
-      @if(filterValue){
-      <button mat-icon-button matSuffix aria-label="Clear" (click)="clearFilter()">
+      @if(searchControl.value){
+      <button mat-icon-button matSuffix aria-label="Clear" (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>
-      } @if(!filterValue){
+      } @if(!searchControl.value){
       <mat-icon matSuffix>search</mat-icon>
       }
     </mat-form-field>
   </div>
 
-   @if(loading){
-     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-       }
- 
+  @if(loading){
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
 </mat-card>
 
 <!-- Cards grid section -->
 <mat-card class="section cards-card">
-  @if (!loading && filtered.length === 0) {
-  <div class="empty-state">
-    <mat-icon>search_off</mat-icon>
-    <div>No books found</div>
-    @if (filterValue) {
-    <button mat-stroked-button (click)="clearFilter()">Clear filter</button>
-    }
-  </div>
+  @if (!loading && books.length === 0 && !searchControl.value) {
+    <div class="empty-state">
+      <mat-icon>library_books</mat-icon>
+      <div>No books in your library yet</div>
+      <button mat-raised-button color="primary" [routerLink]="addNewLink">
+        <mat-icon>add</mat-icon>
+        Add your first book
+      </button>
+    </div>
   }
 
-  <div class="cards-grid">
-    @for (b of filtered; track b.id) {
-    <mat-card class="book-card mat-elevation-z2" 
-      [routerLink]="['/library','books', b.id, 'overview']"
-      role="button" tabindex="0">
-      <div class="media-wrap" [class.loading]="!isImageLoaded(b.id)">
-        <img
-          [src]="b.imageUrl || coverFor(b) || getPlaceholderFor(b)"
-          [class.loaded]="isImageLoaded(b.id)"
-          (load)="onImageLoad(b.id)"
-          (error)="onCoverError($event, b)"
-          [alt]="b.title"
-          loading="lazy"
-        />
-      </div>
+  @if (!loading && books.length === 0 && searchControl.value) {
+    <div class="empty-state">
+      <mat-icon>search_off</mat-icon>
+      <div>No books found for "{{ searchControl.value }}"</div>
+      <button mat-stroked-button (click)="clearSearch()">Clear search</button>
+    </div>
+  }
 
-      <mat-card-header>
-        <mat-card-title>{{ b.title }}</mat-card-title>
-        <mat-card-subtitle>{{ b.author }} • {{ b.year }}</mat-card-subtitle>
-      </mat-card-header>
+  @if (books.length > 0) {
+    <div class="cards-grid">
+      @for (b of books; track b.id) {
+      <mat-card class="book-card mat-elevation-z2" 
+        [routerLink]="['/library','books', b.id, 'overview']"
+        role="button" tabindex="0">
+        <div class="media-wrap" [class.loading]="!isImageLoaded(b.id)">
+          <img
+            [src]="b.imageUrl || coverFor(b) || getPlaceholderFor(b)"
+            [class.loaded]="isImageLoaded(b.id)"
+            (load)="onImageLoad(b.id)"
+            (error)="onCoverError($event, b)"
+            [alt]="b.title"
+            loading="lazy"
+          />
+        </div>
 
-      <mat-card-content>
-        <mat-chip appearance="outlined" color="primary">{{ b.genre }}</mat-chip>
-      </mat-card-content>
+        <mat-card-header>
+          <mat-card-title>{{ b.title }}</mat-card-title>
+          <mat-card-subtitle>{{ b.author }} • {{ b.year }}</mat-card-subtitle>
+        </mat-card-header>
 
-      <mat-card-actions align="end">
-        <a mat-stroked-button 
-        color="primary" 
-        [routerLink]="['/library', 'books', b.id]"
-        (click)="$event.stopPropagation()">
-          <mat-icon>edit</mat-icon>&nbsp;Edit
-        </a>
-        <button mat-stroked-button color="warn" 
-        (click)="$event.stopPropagation(); confirmDelete(b)">
-          <mat-icon>delete</mat-icon>&nbsp;Delete
-        </button>
-      </mat-card-actions>
-    </mat-card>
-    }
-  </div>
+        <mat-card-content>
+          <mat-chip appearance="outlined" color="primary">{{ b.genre }}</mat-chip>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+          <a mat-stroked-button 
+          color="primary" 
+          [routerLink]="['/library', 'books', b.id]"
+          (click)="$event.stopPropagation()">
+            <mat-icon>edit</mat-icon>&nbsp;Edit
+          </a>
+          <button mat-stroked-button color="warn" 
+          (click)="$event.stopPropagation(); confirmDelete(b)">
+            <mat-icon>delete</mat-icon>&nbsp;Delete
+          </button>
+        </mat-card-actions>
+      </mat-card>
+      }
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-section">
+      <mat-paginator
+        [length]="totalBooks"
+        [pageSize]="pageSize"
+        [pageIndex]="currentPage - 1"
+        [pageSizeOptions]="pageSizeOptions"
+        [showFirstLastButtons]="true"
+        (page)="onPageChange($event)"
+        aria-label="Select page">
+      </mat-paginator>
+    </div>
+  }
 </mat-card>

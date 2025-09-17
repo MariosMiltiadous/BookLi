@@ -391,3 +391,55 @@ mat-progress-bar {
   border-radius: 4px;
   overflow: hidden;
 }
+
+// ===== PAGINATION SECTION =====
+.pagination-section {
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px 16px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 24px;
+  
+  mat-paginator {
+    background: transparent;
+    
+    // Custom styling for better integration
+    ::ng-deep .mat-mdc-paginator-container {
+      padding: 0;
+    }
+    
+    ::ng-deep .mat-mdc-paginator-page-size {
+      align-items: center;
+    }
+  }
+}
+
+// ===== RESPONSIVE PAGINATION =====
+@media (max-width: 600px) {
+  .pagination-section {
+    padding: 16px 8px 8px;
+    
+    mat-paginator {
+      width: 100%;
+      
+      ::ng-deep .mat-mdc-paginator-container {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+      }
+      
+      ::ng-deep .mat-mdc-paginator-page-size {
+        margin-bottom: 8px;
+      }
+    }
+  }
+}
+
+// ===== COUNT PILL ANIMATION =====
+.count-pill {
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}

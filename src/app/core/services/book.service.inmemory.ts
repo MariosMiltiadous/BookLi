@@ -14,17 +14,45 @@ export class InMemoryBookService implements IBookService {
     this.seed.map((b) => ({ ...b })) // clone to avoid mutating the seed constant
   );
 
-  list(): Observable<IBook[]> {
-    return this.store.asObservable().pipe(delay(this.latency));
+  list(params?: { page?: number; pageSize?: number; q?: string }): Observable<{ books: IBook[]; total: number }> {
+    return this.store.asObservable().pipe(
+      map(books => {
+        let filtered = books;
+        
+        // Apply search filter (simulate JSON-server full-text search)
+        if (params?.q) {
+          const query = params.q.toLowerCase();
+          filtered = books.filter(book =>
+            book.title.toLowerCase().includes(query) ||
+            book.author.toLowerCase().includes(query) ||
+            book.genre.toLowerCase().includes(query) ||
+            String(book.year).includes(query)
+          );
+        }
+        
+        const total = filtered.length;
+        
+        // Apply pagination
+        if (params?.page && params?.pageSize) {
+          const startIndex = (params.page - 1) * params.pageSize;
+          const endIndex = startIndex + params.pageSize;
+          filtered = filtered.slice(startIndex, endIndex);
+        }
+        
+        return { books: filtered, total };
+      }),
+      delay(this.latency)
+    );
   }
 
   getById(id: string): Observable<IBook> {
-    return this.list().pipe(
+    return this.store.asObservable().pipe(
       map((list) => {
         const found = list.find((b) => b.id === id);
         if (!found) throw new Error('Not Found');
         return found;
-      })
+      }),
+      delay(this.latency)
     );
   }
 
