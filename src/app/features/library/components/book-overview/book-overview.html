@@ -1,0 +1,55 @@
+<mat-card class="ovr-card mat-elevation-z3" *ngIf="book as b; else loadingTpl">
+  <!-- Cover -->
+  <div class="cover-wrap">
+    <img
+      [src]="b.imageUrl || fallback"
+      [alt]="b.title"
+      (error)="onImageError($event)"
+      loading="lazy"
+    />
+  </div>
+
+  <!-- Title / meta -->
+  <div class="title-block">
+    <h1 class="title" [title]="b.title">{{ b.title }}</h1>
+    <div class="meta">
+      <mat-icon aria-hidden="true">person</mat-icon>
+      <span>{{ b.author }}</span>
+      <span class="dot" *ngIf="b.year">•</span>
+      <span *ngIf="b.year">{{ b.year }}</span>
+      <span class="dot" *ngIf="b.genre">•</span>
+      <span class="badge" *ngIf="b.genre">{{ b.genre }}</span>
+    </div>
+  </div>
+
+  <mat-divider class="divider"></mat-divider>
+
+  <!-- Description (mock if empty) -->
+  <section class="section">
+    <h3 class="section-title">
+      <mat-icon>menu_book</mat-icon>
+      Overview
+    </h3>
+    <p class="desc">
+      {{ b.description || mockDescription }}
+    </p>
+  </section>
+
+  <mat-divider class="divider"></mat-divider>
+
+  <!-- Actions -->
+  <div class="actions">
+    <a mat-raised-button color="primary" [routerLink]="['/library','books', b.id]">
+      <mat-icon>edit</mat-icon>&nbsp;Edit
+    </a>
+    <a mat-button routerLink="/library/books">
+      <mat-icon>arrow_back</mat-icon>&nbsp;Back to list
+    </a>
+  </div>
+</mat-card>
+
+<ng-template #loadingTpl>
+  <div class="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+  </div>
+</ng-template>

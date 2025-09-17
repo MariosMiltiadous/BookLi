@@ -1,0 +1,109 @@
+:host {
+  display: block;
+  padding: clamp(8px, 2vw, 16px);
+}
+
+.ovr-card {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(16px, 2.5vw, 28px);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--mat-sys-surface) 90%, white);
+}
+
+/* Top centered cover */
+.cover-wrap {
+  display: grid;
+  place-items: center;
+  padding: clamp(8px, 2vw, 16px) 0 6px;
+
+  img {
+    width: min(520px, 88vw);
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 14px;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
+    background: #f3f4f6;
+  }
+}
+
+/* Title + meta */
+.title-block {
+  text-align: center;
+  margin-top: 10px;
+
+  .title {
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: .2px;
+    font-size: clamp(24px, 3.2vw, 34px);
+    line-height: 1.15;
+    color: var(--mat-sys-on-surface);
+  }
+
+  .meta {
+    margin-top: 8px;
+    color: #6b7280;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: clamp(13px, 1.6vw, 14px);
+
+    .dot { margin: 0 4px; opacity: .6; }
+    mat-icon { font-size: 18px; height: 18px; width: 18px; }
+
+    .badge {
+      background: color-mix(in srgb, var(--mat-sys-primary) 12%, white);
+      color: var(--mat-sys-primary);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+  }
+}
+
+.section {
+  margin-top: clamp(8px, 2vw, 14px);
+
+  .section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 8px;
+    font-weight: 700;
+    color: var(--mat-sys-on-surface-variant);
+
+    mat-icon { font-variation-settings: "FILL" 1; }
+  }
+
+  .desc {
+    margin: 0;
+    max-width: 760px;
+    line-height: 1.65;
+    color: #374151;
+    font-size: clamp(14px, 1.9vw, 16px);
+    text-wrap: pretty;
+    margin-inline: auto;
+    text-align: center;
+  }
+}
+
+.divider { margin: 16px 0; }
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+
+  a[mat-raised-button] mat-icon,
+  a[mat-button] mat-icon { vertical-align: -3px; }
+}
+
+.loading {
+  min-height: 40vh;
+  display: grid;
+  place-items: center;
+}

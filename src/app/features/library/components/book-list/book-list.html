@@ -6,7 +6,13 @@
       BookLi Library
     </span>
     <span class="spacer"></span>
-    <button mat-raised-button color="accent" class="add-btn" [routerLink]="addNewLink" aria-label="Add new book">
+    <button
+      mat-raised-button
+      color="accent"
+      class="add-btn"
+      [routerLink]="addNewLink"
+      aria-label="Add new book"
+    >
       <mat-icon>add</mat-icon>
       Add Book
     </button>
@@ -27,16 +33,27 @@
     <!-- Search Field -->
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Search books</mat-label>
-      <input matInput [value]="filterValue" placeholder="Title, author, genre..." (input)="onFilterInput($event)" />
-      <button *ngIf="filterValue" mat-icon-button matSuffix aria-label="Clear" (click)="clearFilter()">
+      <input
+        matInput
+        [value]="filterValue"
+        placeholder="Title, author, genre..."
+        (input)="onFilterInput($event)"
+      />
+      @if(filterValue){
+      <button mat-icon-button matSuffix aria-label="Clear" (click)="clearFilter()">
         <mat-icon>close</mat-icon>
       </button>
-      <mat-icon *ngIf="!filterValue" matSuffix>search</mat-icon>
+      } @if(!filterValue){
+      <mat-icon matSuffix>search</mat-icon>
+      }
     </mat-form-field>
   </div>
-  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-</mat-card>
 
+   @if(loading){
+     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+       }
+ 
+</mat-card>
 
 <!-- Cards grid section -->
 <mat-card class="section cards-card">
@@ -50,12 +67,19 @@
   </div>
   }
 
-<div class="cards-grid">
-  @for (b of filtered; track b.id) {
-    <mat-card class="book-card mat-elevation-z2">
+  <div class="cards-grid">
+    @for (b of filtered; track b.id) {
+    <mat-card class="book-card mat-elevation-z2" 
+      [routerLink]="['/library','books', b.id, 'overview']">
       <div class="media-wrap" [class.loading]="!isImageLoaded(b.id)">
-        <img [src]="b.imageUrl || getPlaceholderFor(b)" [class.loaded]="isImageLoaded(b.id)"
-          (load)="onImageLoad(b.id)" (error)="onCoverError(b)" [alt]="b.title" loading="lazy" />
+        <img
+          [src]="b.imageUrl || getPlaceholderFor(b)"
+          [class.loaded]="isImageLoaded(b.id)"
+          (load)="onImageLoad(b.id)"
+          (error)="onCoverError(b)"
+          [alt]="b.title"
+          loading="lazy"
+        />
       </div>
 
       <mat-card-header>
@@ -68,7 +92,7 @@
       </mat-card-content>
 
       <mat-card-actions align="end">
-        <a mat-stroked-button color="primary" [routerLink]="['/library','books', b.id]">
+        <a mat-stroked-button color="primary" [routerLink]="['/library', 'books', b.id]">
           <mat-icon>edit</mat-icon>&nbsp;Edit
         </a>
         <button mat-stroked-button color="warn" (click)="confirmDelete(b)">
@@ -76,6 +100,6 @@
         </button>
       </mat-card-actions>
     </mat-card>
-  }
-</div>
+    }
+  </div>
 </mat-card>

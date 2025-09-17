@@ -23,6 +23,12 @@ const routes: Routes = [
     // runGuardsAndResolvers: 'paramsOrQueryParamsChange', // optional
     title: 'BookLi • Edit Book',
   },
+   {
+    path: 'books/:id/overview',
+    loadComponent: () =>
+      import('./components/book-overview/book-overview').then(c => c.BookOverview),
+    title: 'BookLi • Book Overview',
+  },
   { path: '', pathMatch: 'full', redirectTo: 'books' },
 ];
 

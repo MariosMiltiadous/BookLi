@@ -1,4 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  DestroyRef,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Subject, of } from 'rxjs';
@@ -16,7 +22,13 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 @Component({
   standalone: true,
   selector: 'app-book-list',
-  imports: [CommonModule, RouterLink, ...MAT_LIST_VIEW_IMPORTS, MatDialogModule, MatProgressBarModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ...MAT_LIST_VIEW_IMPORTS,
+    MatDialogModule,
+    MatProgressBarModule,
+  ],
   templateUrl: './book-list.html',
   styleUrls: ['./book-list.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,25 +43,25 @@ export class BookList {
   // Data for card view
   books: IBook[] = [];
   filtered: IBook[] = [];
-  
+
   // UI state
   filterValue = '';
   loading = false;
-  
+
   // 🔁 central "refresh" trigger
   private reload$ = new Subject<void>();
 
   ngOnInit() {
     this.reload$
       .pipe(
-        startWith(void 0),                 // initial load
+        startWith(void 0), // initial load
         tap(() => {
           this.loading = true;
           this.cdr.markForCheck(); // 🔧 Trigger change detection when loading starts
         }),
         switchMap(() =>
           this.service.list().pipe(
-            catchError(err => {
+            catchError((err) => {
               this.notify.error(err?.message ?? 'Load failed');
               return of([] as IBook[]);
             }),
@@ -62,7 +74,7 @@ export class BookList {
         ),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(books => {
+      .subscribe((books) => {
         this.books = books ?? [];
         this.resetImageStates(); // Clear image loading states for new data
         this.applyFilter(this.filterValue); // keep current filter applied
@@ -74,9 +86,8 @@ export class BookList {
   applyFilter(value: string) {
     const f = (value ?? '').trim().toLowerCase();
     this.filterValue = value ?? '';
-    this.filtered = (this.books ?? []).filter(b =>
-      [b.title, b.author, b.genre, String(b.year)]
-        .some(x => (x ?? '').toLowerCase().includes(f))
+    this.filtered = (this.books ?? []).filter((b) =>
+      [b.title, b.author, b.genre, String(b.year)].some((x) => (x ?? '').toLowerCase().includes(f))
     );
     // No need for markForCheck here since this is usually called from user input events
   }
@@ -102,16 +113,17 @@ export class BookList {
       disableClose: false,
     });
 
-    ref.afterClosed()
+    ref
+      .afterClosed()
       .pipe(
         filter(Boolean),
         switchMap(() => this.service.delete(b.id)),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe({
-        next: () => { 
-          this.notify.success('Book deleted'); 
-          this.reload$.next(); 
+        next: () => {
+          this.notify.success('Book deleted');
+          this.reload$.next();
         },
         error: (e) => this.notify.error(e?.message ?? 'Delete failed'),
       });
@@ -119,33 +131,6 @@ export class BookList {
 
   // ——— Image loading state management ———
   private loadedImages = new Set<string>();
-
-  // Default placeholder image (no file needed)
-  defaultPlaceholder = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400' width='300' height='400'>
-      <defs>
-        <linearGradient id='bookGrad' x1='0%' y1='0%' x2='100%' y2='100%'>
-          <stop offset='0%' stop-color='#f8fafc'/>
-          <stop offset='100%' stop-color='#e2e8f0'/>
-        </linearGradient>
-      </defs>
-      <rect width='300' height='400' fill='url(#bookGrad)' stroke='#cbd5e1' stroke-width='2' rx='8'/>
-      <rect x='20' y='30' width='260' height='2' fill='#94a3b8' rx='1'/>
-      <rect x='20' y='50' width='200' height='2' fill='#cbd5e1' rx='1'/>
-      <rect x='20' y='70' width='180' height='2' fill='#e2e8f0' rx='1'/>
-      
-      <!-- Book icon -->
-      <g transform='translate(125, 180)' fill='#94a3b8'>
-        <path d='M-20-20h40v40h-40z' fill='none' stroke='#94a3b8' stroke-width='2' rx='4'/>
-        <path d='M-15-15h30M-15-8h25M-15-1h28M-15 6h22M-15 13h26' stroke='#cbd5e1' stroke-width='1.5'/>
-      </g>
-      
-      <text x='150' y='280' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
-            font-size='14' fill='#64748b' font-weight='500'>No Cover Available</text>
-      <text x='150' y='300' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
-            font-size='12' fill='#94a3b8'>Click to edit book details</text>
-    </svg>
-  `);
 
   isImageLoaded(bookId: string): boolean {
     return this.loadedImages.has(bookId);
@@ -164,8 +149,8 @@ export class BookList {
   // ——— Optional cover helpers (if you don't use coverUrl in data) ———
   private coverCache: Record<string, string> = {};
 
-  coverFor(b: IBook) { 
-    return this.coverCache[b.id] ?? `assets/covers/${b.id}.jpg`; 
+  coverFor(b: IBook) {
+    return this.coverCache[b.id] ?? `assets/covers/${b.id}.jpg`;
   }
 
   // Generate a personalized placeholder with book title and author
@@ -180,8 +165,10 @@ export class BookList {
     const title = (b.title || 'Untitled Book').slice(0, 24);
     const author = (b.author || 'Unknown Author').slice(0, 20);
     const year = b.year || '';
-    
-    const placeholder = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+
+    const placeholder =
+      'data:image/svg+xml;utf8,' +
+      encodeURIComponent(`
       <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400' width='300' height='400'>
         <defs>
           <linearGradient id='bookGrad${b.id}' x1='0%' y1='0%' x2='100%' y2='100%'>
@@ -189,7 +176,9 @@ export class BookList {
             <stop offset='100%' stop-color='#e2e8f0'/>
           </linearGradient>
         </defs>
-        <rect width='300' height='400' fill='url(#bookGrad${b.id})' stroke='#cbd5e1' stroke-width='2' rx='8'/>
+        <rect width='300' height='400' fill='url(#bookGrad${
+          b.id
+        })' stroke='#cbd5e1' stroke-width='2' rx='8'/>
         <rect x='20' y='30' width='260' height='2' fill='#94a3b8' rx='1'/>
         <rect x='20' y='50' width='200' height='2' fill='#cbd5e1' rx='1'/>
         <rect x='20' y='70' width='180' height='2' fill='#e2e8f0' rx='1'/>
@@ -213,8 +202,12 @@ export class BookList {
               font-size='13' fill='#6b7280' font-weight='500'>${author}</text>
               
         <!-- Year -->
-        ${year ? `<text x='150' y='245' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
-              font-size='11' fill='#9ca3af'>${year}</text>` : ''}
+        ${
+          year
+            ? `<text x='150' y='245' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
+              font-size='11' fill='#9ca3af'>${year}</text>`
+            : ''
+        }
         
         <!-- Footer text -->
         <text x='150' y='320' text-anchor='middle' font-family='Inter, system-ui, sans-serif' 
@@ -234,4 +227,5 @@ export class BookList {
     this.onImageLoad(b.id);
     // That's it! Let defaultPlaceholder handle the rest
   }
+
 }
