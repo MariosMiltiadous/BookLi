@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -9,6 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { IBook } from '../../../../core/models/book.interface';
 import { IBookService } from '../../../../core/services/book.service.interface';
 import { BOOK_SERVICE } from '../../../../core/services/book.token';
+import { NotificationsService } from '../../../../core/utils/notifications.service';
 
 @Component({
   standalone: true,
@@ -27,7 +28,9 @@ import { BOOK_SERVICE } from '../../../../core/services/book.token';
 export class BookOverview implements OnInit {
   private route = inject(ActivatedRoute);
   private bookService = inject<IBookService>(BOOK_SERVICE as any);
-
+  private notify = inject(NotificationsService);
+  private router = inject(Router); 
+  
   book?: IBook;
   loading = true;
   fallback = '';
@@ -88,13 +91,24 @@ key takeaways, and why it matters to the reader.`;
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id')!;
-    this.bookService.getById(id).subscribe({
+     this.bookService.getById(id).subscribe({
       next: (b) => {
         this.book = b;
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
+        
+        // Show error notification
+        const message = err?.status === 404 
+          ? 'Book not found' 
+          : 'Failed to load book details';
+        this.notify.error(message);
+        
+        // Navigate back to book list after short delay
+        setTimeout(() => {
+          this.router.navigate(['/library/books']);
+        }, 2000); // 2 second delay so user can see the notification
       },
     });
   }
