@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+// Step 1: Create src/app/features/library/library.routes.ts
+import { Routes } from '@angular/router';
 import { bookResolver } from './resolvers/book.resolver';
 
-const routes: Routes = [
- {
+export const libraryRoutes: Routes = [
+  {
     path: 'books',
     loadComponent: () =>
       import('./components/book-list/book-list').then(c => c.BookList),
@@ -20,10 +20,9 @@ const routes: Routes = [
     loadComponent: () =>
       import('./components/book-detail/book-detail').then(c => c.BookDetail),
     resolve: { book: bookResolver },
-    // runGuardsAndResolvers: 'paramsOrQueryParamsChange', // optional
     title: 'BookLi • Edit Book',
   },
-   {
+  {
     path: 'books/:id/overview',
     loadComponent: () =>
       import('./components/book-overview/book-overview').then(c => c.BookOverview),
@@ -31,9 +30,3 @@ const routes: Routes = [
   },
   { path: '', pathMatch: 'full', redirectTo: 'books' },
 ];
-
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-})
-export class LibraryRoutingModule {}

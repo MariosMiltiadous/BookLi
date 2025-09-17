@@ -10,7 +10,7 @@ const routes: Routes = [
   {
     path: 'library',
     loadChildren: () =>
-      import('./features/library/library.module').then(m => m.LibraryModule),
+      import('./features/library/library.routes').then(m => m.libraryRoutes),
   },
   { path: '**', redirectTo: '' },
 ];
