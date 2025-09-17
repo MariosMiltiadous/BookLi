@@ -1,40 +1,42 @@
+<!-- Top Toolbar -->
 <mat-toolbar color="primary" class="list-toolbar">
-  <span><mat-icon>menu_book</mat-icon>&nbsp;BookLi Library</span>
-  <span class="spacer"></span>
-
-  <button mat-raised-button class="add-btn" [routerLink]="addNewLink" aria-label="Add a new book"
-    [matTooltip]="'Add a new book (A)'">
-    <mat-icon>add</mat-icon>
-    <span>Add Book</span>
-  </button>
+  <div class="toolbar-content">
+    <span class="brand">
+      <mat-icon>menu_book</mat-icon>
+      BookLi Library
+    </span>
+    <span class="spacer"></span>
+    <button mat-raised-button color="accent" class="add-btn" [routerLink]="addNewLink" aria-label="Add new book">
+      <mat-icon>add</mat-icon>
+      Add Book
+    </button>
+  </div>
 </mat-toolbar>
 
-<!-- Header section (separate card) -->
-<mat-card class="section header-card">
+<!-- Header Card -->
+<mat-card class="header-card">
   <div class="header-row">
     <div class="title-wrap">
-      <mat-icon class="title-icon">menu_book</mat-icon>
-      <h2 class="title">Books</h2>
+      <h2 class="title">
+        <mat-icon>menu_book</mat-icon>
+        Books
+      </h2>
       <span class="count-pill">{{ filtered.length }} total</span>
     </div>
 
-    <mat-form-field appearance="outline" class="filter-field" subscriptSizing="dynamic">
+    <!-- Search Field -->
+    <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Search books</mat-label>
-      <input matInput [value]="filterValue" placeholder="Title, author, year, genre" (input)="onFilterInput($event)" />
-      @if (filterValue) {
-      <button mat-icon-button matSuffix aria-label="Clear search" (click)="clearFilter()">
+      <input matInput [value]="filterValue" placeholder="Title, author, genre..." (input)="onFilterInput($event)" />
+      <button *ngIf="filterValue" mat-icon-button matSuffix aria-label="Clear" (click)="clearFilter()">
         <mat-icon>close</mat-icon>
       </button>
-      } @else {
-      <mat-icon matSuffix>search</mat-icon>
-      }
+      <mat-icon *ngIf="!filterValue" matSuffix>search</mat-icon>
     </mat-form-field>
   </div>
-
-  @if (loading) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  }
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 </mat-card>
+
 
 <!-- Cards grid section -->
 <mat-card class="section cards-card">

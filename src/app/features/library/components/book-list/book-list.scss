@@ -3,6 +3,82 @@
   margin-top: 16px; 
 }
 
+// ===== HEADER =====
+.list-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .toolbar-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  .add-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .spacer {
+    flex: 1;
+  }
+}
+
+.header-card {
+  margin: 16px auto;
+  padding: 16px;
+  border-radius: 12px;
+
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0;
+      font-weight: 600;
+      font-size: 22px;
+    }
+
+    .count-pill {
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+  }
+
+  .filter-field {
+    width: 280px;
+    min-width: 200px;
+  }
+}
+
+
 .header-card {
   position: sticky;
   top: 0;

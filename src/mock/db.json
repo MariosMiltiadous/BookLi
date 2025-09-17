@@ -93,6 +93,14 @@
       "author": " Joseph AlbahariJoseph Albahari",
       "year": 2025,
       "genre": "Software"
+    },
+    {
+      "id": "02329e01-cde5-4a67-912e-ffc4c560e766",
+      "title": "Test",
+      "author": "asd",
+      "year": 2025,
+      "genre": "Non-fiction",
+      "imageUrl": ""
     }
   ]
 }
