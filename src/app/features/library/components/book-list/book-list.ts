@@ -222,10 +222,11 @@ export class BookList {
     return placeholder;
   }
 
-  onCoverError(b: IBook) {
+  onCoverError(evt: Event, b: IBook) {
     // Mark as loaded even on error to stop shimmer
+     const img = evt.target as HTMLImageElement;
+  img.src = this.getPlaceholderFor(b); // final fallback
     this.onImageLoad(b.id);
-    // That's it! Let defaultPlaceholder handle the rest
   }
 
 }
