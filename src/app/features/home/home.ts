@@ -39,14 +39,12 @@ type TestUser = {
 })
 export class Home {
   user: TestUser = {
-    name: 'Alex Johnson',
-    email: 'alex.johnson@example.com',
+    name: 'Marios Miltiadous',
+    email: 'mariosmiltiadous@example.com',
     role: 'Senior Angular Lead',
     memberSince: 'Jan 2021',
     favoriteGenres: ['Software', 'Non-fiction', 'Science'],
     readingNow: 'Refactoring (Martin Fowler)',
-    // if you added your logo/avatars under /assets, you can point to one here:
-    // avatarUrl: 'assets/avatars/user-1.png'
   };
 
   get initials(): string {

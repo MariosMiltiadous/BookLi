@@ -8,6 +8,7 @@ const routes: Routes = [
       import('./features/home/home').then(c => c.Home),
   },
   {
+    // instead of create a Library module, better lazy load libraryRoutes of standalone components
     path: 'library',
     loadChildren: () =>
       import('./features/library/library.routes').then(m => m.libraryRoutes),
