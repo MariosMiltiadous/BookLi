@@ -32,8 +32,16 @@ export class BookOverview implements OnInit {
   loading = true;
 
   // Default fallback if no cover or error loading
-  fallback = 'assets/images/book-placeholder.png';
-
+  fallback =
+    'data:image/svg+xml;utf8,' +
+    encodeURIComponent(`
+  <svg xmlns="http://www.w3.org/2000/svg" width="300" height="400" viewBox="0 0 300 400">
+    <rect width="300" height="400" fill="#f3f4f6"/>
+    <text x="50%" y="50%" font-size="20" text-anchor="middle" fill="#9ca3af">
+      No Cover
+    </text>
+  </svg>
+`);
   mockDescription = `A practical exploration of clean, maintainable software design.
 This overview page is using placeholder text. Replace it with the book's real summary,
 key takeaways, and why it matters to the reader.`;
