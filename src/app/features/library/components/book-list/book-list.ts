@@ -76,7 +76,9 @@ export class BookList {
       )
       .subscribe((books) => {
         this.books = books ?? [];
-        this.resetImageStates(); // Clear image loading states for new data
+        // ✅ Reconcile instead of clearing: preserve "loaded" flags for still-present books,
+        // remove flags for deleted ones so they don't stick around.
+        this.reconcileImageStates(this.books);
         this.applyFilter(this.filterValue); // keep current filter applied
         this.cdr.markForCheck(); // 🔧 Trigger change detection when data arrives
       });
@@ -123,14 +125,14 @@ export class BookList {
       .subscribe({
         next: () => {
           this.notify.success('Book deleted');
-          this.reload$.next();
+          this.reload$.next(); 
         },
         error: (e) => this.notify.error(e?.message ?? 'Delete failed'),
       });
   }
 
   // ——— Image loading state management ———
-  private loadedImages = new Set<string>();
+  private loadedImages = new Set<string>(); // keep IDs that have fired (load) at least once
 
   isImageLoaded(bookId: string): boolean {
     return this.loadedImages.has(bookId);
@@ -141,16 +143,11 @@ export class BookList {
     this.cdr.markForCheck(); // Trigger change detection to update UI
   }
 
-  // Reset loaded images when data reloads
-  private resetImageStates(): void {
-    this.loadedImages.clear();
-  }
-
   // ——— Optional cover helpers (if you don't use coverUrl in data) ———
   private coverCache: Record<string, string> = {};
 
   coverFor(b: IBook) {
-    return this.coverCache[b.id] ?? `assets/covers/${b.id}.jpg`;
+    return `assets/covers/${b.id}.jpg`;
   }
 
   // Generate a personalized placeholder with book title and author
@@ -222,11 +219,18 @@ export class BookList {
     return placeholder;
   }
 
-  onCoverError(evt: Event, b: IBook) {
-    // Mark as loaded even on error to stop shimmer
-     const img = evt.target as HTMLImageElement;
-  img.src = this.getPlaceholderFor(b); // final fallback
-    this.onImageLoad(b.id);
+ // Reconcile loaded states with the new list
+  private reconcileImageStates(current: IBook[]) {
+    const keep = new Set(current.map((b) => b.id));
+    for (const id of Array.from(this.loadedImages)) {
+      if (!keep.has(id)) this.loadedImages.delete(id);
+    }
   }
 
+  onCoverError(evt: Event, b: IBook) {
+    // Mark as loaded even on error to stop shimmer
+    const img = evt.target as HTMLImageElement;
+    img.src = this.getPlaceholderFor(b); // final fallback
+    this.onImageLoad(b.id);
+  }
 }

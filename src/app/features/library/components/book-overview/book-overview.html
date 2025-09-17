@@ -2,7 +2,7 @@
   <!-- Cover -->
   <div class="cover-wrap">
     <img
-      [src]="b.imageUrl || fallback"
+      [src]="getCorrectCover(b)"
       [alt]="b.title"
       (error)="onImageError($event)"
       loading="lazy"

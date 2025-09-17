@@ -30,18 +30,58 @@ export class BookOverview implements OnInit {
 
   book?: IBook;
   loading = true;
+  fallback = '';
 
-  // Default fallback if no cover or error loading
-  fallback =
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(`
-  <svg xmlns="http://www.w3.org/2000/svg" width="300" height="400" viewBox="0 0 300 400">
-    <rect width="300" height="400" fill="#f3f4f6"/>
-    <text x="50%" y="50%" font-size="20" text-anchor="middle" fill="#9ca3af">
-      No Cover
-    </text>
-  </svg>
-`);
+  // Inline SVG fallback (no file required)
+  private svgFallback(title: string = 'No Cover'): string {
+    const t = (title || 'No Cover').slice(0, 22);
+    return (
+      'data:image/svg+xml;utf8,' +
+      encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="300" height="400" viewBox="0 0 300 400">
+          <rect width="300" height="400" rx="12" fill="#f3f4f6"/>
+          <text x="50%" y="48%" font-size="16" text-anchor="middle" fill="#9ca3af"
+                font-family="Inter, Arial, sans-serif">${t}</text>
+          <text x="50%" y="58%" font-size="12" text-anchor="middle" fill="#c4c7cc"
+                font-family="Inter, Arial, sans-serif">No Cover</text>
+        </svg>
+      `)
+    );
+  }
+
+  // Initial src preference: API url → local jpg
+  getCorrectCover(b: IBook): string {
+    return b.imageUrl || `assets/covers/${b.id}.jpg`;
+  }
+
+  // Error cascade: (imageUrl ->) jpg -> png -> inline SVG
+  onImageError(evt: Event) {
+    const img = evt.target as HTMLImageElement | null;
+    if (!img) return; // Exit if no element
+
+    const id = this.book?.id;
+
+    // 1) Try local JPG if not already tried
+    if (!img.dataset?.['triedLocalJpg'] && id && !img.src.includes('/assets/covers/')) {
+      img.dataset!['triedLocalJpg'] = '1';
+      img.src = `assets/covers/${id}.jpg`;
+      return;
+    }
+
+    // 2) Try local PNG if JPG failed
+    if (!img.dataset?.['triedPng'] && id && img.src.endsWith('.jpg')) {
+      img.dataset!['triedPng'] = '1';
+      img.src = `assets/covers/${id}.png`;
+      return;
+    }
+
+    // 3) Fallback to inline SVG only once
+    if (!img.dataset?.['fellBack']) {
+      img.dataset!['fellBack'] = '1';
+      img.src = this.svgFallback(this.book?.title ?? 'No Cover');
+    }
+  }
+
   mockDescription = `A practical exploration of clean, maintainable software design.
 This overview page is using placeholder text. Replace it with the book's real summary,
 key takeaways, and why it matters to the reader.`;
@@ -57,9 +97,5 @@ key takeaways, and why it matters to the reader.`;
         this.loading = false;
       },
     });
-  }
-
-  onImageError(e: Event) {
-    (e.target as HTMLImageElement).src = this.fallback;
   }
 }
