@@ -29,12 +29,7 @@ export class HttpBookService implements IBookService {
   }
 
   create(payload: Omit<IBook, 'id'>): Observable<IBook> {
-    // Keep string ids to match IBook
-    const body: IBook = {
-      id: crypto.randomUUID?.() ?? Math.random().toString(36).slice(2, 10),
-      ...payload,
-    };
-    return this.http.post<IBook>(this.base, body);
+    return this.http.post<IBook>(this.base, payload);
   }
 
   update(id: string, changes: Partial<IBook>): Observable<IBook> {
