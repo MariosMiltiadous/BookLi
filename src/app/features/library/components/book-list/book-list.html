@@ -70,7 +70,8 @@
   <div class="cards-grid">
     @for (b of filtered; track b.id) {
     <mat-card class="book-card mat-elevation-z2" 
-      [routerLink]="['/library','books', b.id, 'overview']">
+      [routerLink]="['/library','books', b.id, 'overview']"
+      role="button" tabindex="0">
       <div class="media-wrap" [class.loading]="!isImageLoaded(b.id)">
         <img
           [src]="b.imageUrl || getPlaceholderFor(b)"
@@ -92,10 +93,14 @@
       </mat-card-content>
 
       <mat-card-actions align="end">
-        <a mat-stroked-button color="primary" [routerLink]="['/library', 'books', b.id]">
+        <a mat-stroked-button 
+        color="primary" 
+        [routerLink]="['/library', 'books', b.id]"
+        (click)="$event.stopPropagation()">
           <mat-icon>edit</mat-icon>&nbsp;Edit
         </a>
-        <button mat-stroked-button color="warn" (click)="confirmDelete(b)">
+        <button mat-stroked-button color="warn" 
+        (click)="$event.stopPropagation(); confirmDelete(b)">
           <mat-icon>delete</mat-icon>&nbsp;Delete
         </button>
       </mat-card-actions>
