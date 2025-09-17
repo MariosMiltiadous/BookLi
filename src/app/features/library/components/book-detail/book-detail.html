@@ -1,53 +1,107 @@
 <mat-card>
-  <mat-card-title>{{ isEdit ? 'Edit Book' : 'Add Book' }}</mat-card-title>
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>{{ isEdit ? 'edit' : 'add' }}</mat-icon>
+      {{ isEdit ? 'Edit Book' : 'Add New Book' }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      {{ isEdit ? 'Update book information' : 'Fill in the details for your new book' }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
   <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form-grid" [class.form-loading]="saving">
+      
+      <!-- Title Field -->
       <mat-form-field appearance="outline">
         <mat-label>Title</mat-label>
-        <input matInput formControlName="title" />
-        @if (form.controls.title.hasError('required') && (form.controls.title.touched ||
-        form.controls.title.dirty)) {
-        <mat-error>Title is required</mat-error>
+        <input matInput formControlName="title" placeholder="Enter book title" />
+        <mat-icon matSuffix>title</mat-icon>
+        @if (isFieldInvalid('title')) {
+          <mat-error>Title is required</mat-error>
         }
       </mat-form-field>
 
+      <!-- Author Field -->
       <mat-form-field appearance="outline">
         <mat-label>Author</mat-label>
-        <input matInput formControlName="author" />
-        @if(form.controls.author.invalid && form.controls.author.touched){
-        <mat-error> Author is required </mat-error>
+        <input matInput formControlName="author" placeholder="Enter author name" />
+        <mat-icon matSuffix>person</mat-icon>
+        @if (isFieldInvalid('author')) {
+          <mat-error>Author is required</mat-error>
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Year</mat-label>
-        <input matInput type="number" formControlName="year" />
+      <!-- Year Field -->
+      <mat-form-field appearance="outline" class="year-field">
+        <mat-label>Publication Year</mat-label>
+        <input matInput type="number" formControlName="year" min="1450" [max]="currentYear" />
+        <mat-icon matSuffix>calendar_today</mat-icon>
+        @if (isFieldInvalid('year')) {
+          <mat-error>Please enter a valid year</mat-error>
+        }
       </mat-form-field>
 
+      <!-- Genre Field -->
       <mat-form-field appearance="outline">
         <mat-label>Genre</mat-label>
         <mat-select formControlName="genre">
-          <mat-option value="Software">Software</mat-option>
+          <mat-option value="">-- Select Genre --</mat-option>
+          <mat-option value="Software">Software Development</mat-option>
           <mat-option value="Fiction">Fiction</mat-option>
           <mat-option value="Non-fiction">Non-fiction</mat-option>
           <mat-option value="Science">Science</mat-option>
+          <mat-option value="Business">Business</mat-option>
+          <mat-option value="Biography">Biography</mat-option>
+          <mat-option value="History">History</mat-option>
+          <mat-option value="Self-Help">Self-Help</mat-option>
         </mat-select>
-        @if(form.controls.genre.invalid && form.controls.genre.touched){
-        <mat-error> Genre is required </mat-error>
+        <mat-icon matSuffix>category</mat-icon>
+        @if (isFieldInvalid('genre')) {
+          <mat-error>Please select a genre</mat-error>
         }
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Image Url</mat-label>
-        <input matInput formControlName="imageUrl" />
+      <!-- Image URL Field -->
+      <mat-form-field appearance="outline" class="full-width-field">
+        <mat-label>Cover Image URL</mat-label>
+        <input matInput formControlName="imageUrl" placeholder="https://example.com/cover.jpg" />
+        <mat-icon matSuffix>image</mat-icon>
+        <mat-hint>Optional: Provide a URL to the book's cover image</mat-hint>
       </mat-form-field>
 
+      <!-- Description Field -->
+      <mat-form-field appearance="outline" class="full-width-field">
+        <mat-label>Description</mat-label>
+        <textarea 
+          matInput 
+          formControlName="description" 
+          rows="4">
+        </textarea>
+        <mat-icon matSuffix>description</mat-icon>
+        <mat-hint>Optional: Brief summary or description</mat-hint>
+      </mat-form-field>
+
+      <!-- Action Buttons -->
       <div class="actions">
-        <button mat-raised-button color="primary" type="submit">
-          <mat-icon>save</mat-icon> {{ isEdit ? 'Update' : 'Create' }}
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          [disabled]="saving">
+          @if(!saving) {
+            <mat-icon>save</mat-icon>
+          }
+          {{ saving ? (isEdit ? 'Updating...' : 'Creating...') : (isEdit ? 'Update Book' : 'Create Book') }}
         </button>
-        <button mat-stroked-button type="button" (click)="cancel()">
-          <mat-icon>close</mat-icon> Cancel
+
+        <button 
+          mat-stroked-button 
+          type="button" 
+          (click)="cancel()" 
+          [disabled]="saving">
+          <mat-icon>close</mat-icon>
+          Cancel
         </button>
       </div>
     </form>

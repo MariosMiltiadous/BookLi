@@ -1,5 +1,11 @@
 // src/app/features/library/components/book-detail/book-detail.component.ts
-import { Component, ChangeDetectionStrategy, inject, DestroyRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  DestroyRef,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +17,7 @@ import { NotificationsService } from '../../../../core/utils/notifications.servi
 import { IBook } from '../../../../core/models/book.interface';
 
 import { MAT_FORM_IMPORTS } from '../../../../shared/material/material.imports';
+import { finalize } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -27,16 +34,24 @@ export class BookDetail {
   private service = inject<IBookService>(BOOK_SERVICE as any);
   private notify = inject(NotificationsService);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   isEdit = false;
+  saving = false;
   currentId: string | null = null;
+
+  currentYear = new Date().getFullYear();
 
   form = this.fb.nonNullable.group({
     title: ['', Validators.required],
     author: ['', Validators.required],
-    year: [new Date().getFullYear(), [Validators.required, Validators.min(0)]],
+    year: [
+      new Date().getFullYear(),
+      [Validators.required, Validators.min(1450), Validators.max(new Date().getFullYear() + 1)],
+    ],
     genre: ['', Validators.required],
-    imageUrl:['']
+    description: [''],
+    imageUrl: [''],
   });
 
   ngOnInit(): void {
@@ -54,7 +69,8 @@ export class BookDetail {
           author: book.author,
           year: book.year,
           genre: book.genre,
-          imageUrl: book.imageUrl
+          imageUrl: book.imageUrl,
+          description: book.description,
         });
       } else {
         // create mode: reset sensible defaults
@@ -63,10 +79,16 @@ export class BookDetail {
           author: '',
           year: new Date().getFullYear(),
           genre: '',
-          imageUrl:''
+          imageUrl: '',
+          description: '',
         });
       }
     });
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.form.get(fieldName);
+    return !!(field?.invalid && field?.touched);
   }
 
   save(): void {
@@ -74,25 +96,38 @@ export class BookDetail {
       this.form.markAllAsTouched();
       return;
     }
-    const value = this.form.getRawValue();
 
-    if (this.isEdit && this.currentId) {
-      this.service.update(this.currentId, value).subscribe({
+    const value = this.form.getRawValue();
+    this.saving = true;
+
+    // Choose operation based on mode
+    const operation =
+      this.isEdit && this.currentId
+        ? this.service.update(this.currentId, value)
+        : this.service.create(value);
+
+    // Single subscription with proper cleanup
+    operation
+      .pipe(
+        finalize(() => {
+          this.saving = false;
+          this.cdr.markForCheck(); // Trigger change detection for OnPush
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
         next: () => {
-          this.notify.success('Book updated');
+          const message = this.isEdit ? 'Book updated' : 'Book created';
+          this.notify.success(message);
           this.router.navigate(['/library/books']);
         },
-        error: (e) => this.notify.error(e?.message ?? 'Update failed'),
-      });
-    } else {
-      this.service.create(value).subscribe({
-        next: () => {
-          this.notify.success('Book created');
-          this.router.navigate(['/library/books']);
+        error: (e) => {
+          const message = this.isEdit
+            ? e?.message ?? 'Update failed'
+            : e?.message ?? 'Create failed';
+          this.notify.error(message);
         },
-        error: (e) => this.notify.error(e?.message ?? 'Create failed'),
       });
-    }
   }
 
   cancel(): void {
