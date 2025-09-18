@@ -7,8 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 
 import { IBook } from '../../../../core/models/book.interface';
-import { IBookService } from '../../../../core/services/book.service.interface';
-import { BOOK_SERVICE } from '../../../../core/services/book.token';
+// import { IBookService } from '../../../../core/services/book.service.interface';
+// import { BOOK_SERVICE } from '../../../../core/services/book.token';
 import { NotificationsService } from '../../../../core/utils/notifications.service';
 
 @Component({
@@ -27,12 +27,12 @@ import { NotificationsService } from '../../../../core/utils/notifications.servi
 })
 export class BookOverview implements OnInit {
   private route = inject(ActivatedRoute);
-  private bookService = inject<IBookService>(BOOK_SERVICE as any);
+ // private bookService = inject<IBookService>(BOOK_SERVICE as any);
   private notify = inject(NotificationsService);
   private router = inject(Router); 
   
   book?: IBook;
-  loading = true;
+  loading = false;
   fallback = '';
 
   // Inline SVG fallback (no file required)
@@ -90,26 +90,16 @@ This overview page is using placeholder text. Replace it with the book's real su
 key takeaways, and why it matters to the reader.`;
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id')!;
-     this.bookService.getById(id).subscribe({
-      next: (b) => {
-        this.book = b;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.loading = false;
-        
-        // Show error notification
-        const message = err?.status === 404 
-          ? 'Book not found' 
-          : 'Failed to load book details';
-        this.notify.error(message);
-        
-        // Navigate back to book list after short delay
-        setTimeout(() => {
-          this.router.navigate(['/library/books']);
-        }, 2000); // 2 second delay so user can see the notification
-      },
-    });
+   // ✅ NEW: Use resolver data instead of making HTTP call
+    this.book = this.route.snapshot.data['book'];
+    
+    // ✅ Handle case where resolver returned null (book not found)
+    if (!this.book) {
+      // This should rarely happen since resolver handles errors,
+      // but good to have as safety net
+      this.notify.error('Book not found');
+      this.router.navigate(['/library/books']);
+      return;
+    }
   }
 }
