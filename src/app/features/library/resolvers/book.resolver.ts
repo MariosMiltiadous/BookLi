@@ -1,7 +1,7 @@
 // src/app/features/library/resolvers/book.resolver.ts
 import { inject } from '@angular/core';
 import { ResolveFn, Router } from '@angular/router';
-import { EMPTY, catchError, of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 import { BOOK_SERVICE } from '../../../core/services/book.token';
 import { IBookService } from '../../../core/services/book.service.interface';
 import { NotificationsService } from '../../../core/utils/notifications.service';
