@@ -5,7 +5,7 @@ export abstract class IBookService {
   abstract list(params?: { 
     page?: number; 
     pageSize?: number; 
-    q?: string 
+    filter?: string 
   }): Observable<{ books: IBook[]; total: number }>;
   abstract getById(id: string): Observable<IBook>;
   abstract create(payload: Omit<IBook, 'id'>): Observable<IBook>;

@@ -13,27 +13,44 @@ export class HttpBookService implements IBookService {
   list(params?: {
     page?: number;
     pageSize?: number;
-    q?: string;
+    filter?: string;
   }): Observable<{ books: IBook[]; total: number }> {
-    // Always get all data first
-    let searchParams = new HttpParams();
-    if (params?.q) {
-      searchParams = searchParams.set('q', params.q);
-    }
-
-    return this.http.get<IBook[]>(this.base, { params: searchParams }).pipe(
+    // Always get ALL books first (no server-side pagination/filtering)
+    return this.http.get<IBook[]>(this.base).pipe(
       map((allBooks) => {
-        const total = allBooks.length;
+        console.log('All books from server:', allBooks.length);
 
-        // Apply client-side pagination if parameters provided
-        let books = allBooks;
-        if (params?.page && params?.pageSize) {
-          const startIndex = (params.page - 1) * params.pageSize;
-          const endIndex = startIndex + params.pageSize;
-          books = allBooks.slice(startIndex, endIndex);
+        let filteredBooks = allBooks;
+
+        // Apply client-side filtering
+        if (params?.filter) {
+          const query = params.filter.toLowerCase().trim();
+          filteredBooks = allBooks.filter(
+            (book) =>
+              book.title?.toLowerCase().includes(query) ||
+              book.author?.toLowerCase().includes(query) ||
+              book.genre?.toLowerCase().includes(query)
+          );
+          console.log(`Filtered "${params.filter}": ${filteredBooks.length} results`);
         }
 
-        return { books, total };
+        const total = filteredBooks.length;
+
+        // Apply pagination to filtered results
+        let paginatedBooks = filteredBooks;
+        if (params?.page && params?.pageSize && total > params.pageSize) {
+          const startIndex = (params.page - 1) * params.pageSize;
+          const endIndex = startIndex + params.pageSize;
+          paginatedBooks = filteredBooks.slice(startIndex, endIndex);
+          console.log(`Page ${params.page}: showing ${paginatedBooks.length} of ${total}`);
+        } else if (params?.filter) {
+          console.log(`Search results fit on one page: ${total} books`);
+        }
+
+        return {
+          books: paginatedBooks,
+          total,
+        };
       })
     );
   }

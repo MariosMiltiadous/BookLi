@@ -88,39 +88,10 @@ export class BookList {
     this.reload$
       .pipe(
         startWith(void 0),
-        tap(() => {
-          this.loading = true;
-          this.cdr.markForCheck();
-          this.logger.debug('Starting book list load');
-        }),
-        switchMap(() =>
-          this.service
-            .list({
-              // server side pagination
-              page: this.currentPage,
-              pageSize: this.pageSize,
-              q: this.searchControl.value || undefined,
-            })
-            .pipe(
-              catchError((err) => {
-                this.notify.error(err?.message ?? 'Load failed');
-                return of({ books: [] as IBook[], total: 0 });
-              }),
-              finalize(() => {
-                this.loading = false;
-                this.cdr.markForCheck();
-              })
-            )
-        ),
+        switchMap(() => this.loadBooks()),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe((result) => {
-        this.books = result.books ?? [];
-        this.totalBooks = result.total ?? 0;
-        this.logger.info(`Loaded ${this.books.length} books (${this.totalBooks} total)`);
-        this.reconcileImageStates(this.books);
-        this.cdr.markForCheck();
-      });
+      .subscribe();
   }
 
   // Pagination event handler
@@ -128,6 +99,45 @@ export class BookList {
     this.currentPage = event.pageIndex + 1; // Material uses 0-based, convert to 1-based
     this.pageSize = event.pageSize;
     this.reload$.next();
+  }
+
+  // Extract loading logic to separate method
+  private loadBooks() {
+    this.loading = true;
+    this.cdr.markForCheck();
+    this.logger.debug('Starting book list load');
+
+    const searchValue = this.searchControl.value?.trim();
+
+    return this.service
+      .list({
+        page: this.currentPage,
+        pageSize: this.pageSize,
+        filter: searchValue || undefined,
+      })
+      .pipe(
+        catchError((err) => {
+          this.notify.error(err?.message ?? 'Load failed');
+          return of({ books: [] as IBook[], total: 0 });
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.markForCheck();
+        }),
+        tap((result) => {
+          console.log('Service returned:', result);
+          this.books = result.books ?? [];
+          this.totalBooks = result.total ?? 0;
+
+          const searchInfo = searchValue ? ` for "${searchValue}"` : '';
+          this.logger.info(
+            `Loaded ${this.books.length} books${searchInfo} (${this.totalBooks} total)`
+          );
+
+          this.reconcileImageStates(this.books);
+          this.cdr.markForCheck();
+        })
+      );
   }
 
   // Clear search
@@ -173,10 +183,6 @@ export class BookList {
   onImageLoad(bookId: string): void {
     this.loadedImages.add(bookId);
     this.cdr.markForCheck();
-  }
-
-  coverFor(b: IBook) {
-    return `assets/covers/${b.id}.jpg`;
   }
 
   getPlaceholderFor(b: IBook): string {
@@ -249,9 +255,6 @@ export class BookList {
     if (book.imageUrl && this.isValidHttpUrl(book.imageUrl)) {
       return book.imageUrl;
     }
-
-    // Skip assets entirely - go straight to SVG placeholder
-    // This prevents the 404 error you're seeing
     return this.getPlaceholderFor(book);
   }
 
@@ -263,7 +266,7 @@ export class BookList {
       return false;
     }
   }
-  
+
   private reconcileImageStates(current: IBook[]) {
     const keep = new Set(current.map((b) => b.id));
     for (const id of Array.from(this.loadedImages)) {
