@@ -27,10 +27,10 @@ import { NotificationsService } from '../../../../core/utils/notifications.servi
 })
 export class BookOverview implements OnInit {
   private route = inject(ActivatedRoute);
- // private bookService = inject<IBookService>(BOOK_SERVICE as any);
+  // private bookService = inject<IBookService>(BOOK_SERVICE as any);
   private notify = inject(NotificationsService);
-  private router = inject(Router); 
-  
+  private router = inject(Router);
+
   book?: IBook;
   loading = false;
   fallback = '';
@@ -52,37 +52,18 @@ export class BookOverview implements OnInit {
     );
   }
 
-  // Initial src preference: API url → local jpg
   getCorrectCover(b: IBook): string {
-    return b.imageUrl || `assets/covers/${b.id}.jpg`;
+    return b.imageUrl && b.imageUrl.trim().length > 0 ? b.imageUrl : this.svgFallback(b.title);
   }
 
-  // Error cascade: (imageUrl ->) jpg -> png -> inline SVG
-  onImageError(evt: Event) {
-    const img = evt.target as HTMLImageElement | null;
-    if (!img) return; // Exit if no element
+  onImageError(e: Event) {
+    const img = e.target as HTMLImageElement | null;
+    if (!img) return;
+    // Avoid loops if the fallback itself triggers error
+    if (img.dataset && img.dataset['fellBack']) return;
 
-    const id = this.book?.id;
-
-    // 1) Try local JPG if not already tried
-    if (!img.dataset?.['triedLocalJpg'] && id && !img.src.includes('/assets/covers/')) {
-      img.dataset!['triedLocalJpg'] = '1';
-      img.src = `assets/covers/${id}.jpg`;
-      return;
-    }
-
-    // 2) Try local PNG if JPG failed
-    if (!img.dataset?.['triedPng'] && id && img.src.endsWith('.jpg')) {
-      img.dataset!['triedPng'] = '1';
-      img.src = `assets/covers/${id}.png`;
-      return;
-    }
-
-    // 3) Fallback to inline SVG only once
-    if (!img.dataset?.['fellBack']) {
-      img.dataset!['fellBack'] = '1';
-      img.src = this.svgFallback(this.book?.title ?? 'No Cover');
-    }
+    img.dataset['fellBack'] = '1'; // ✅ assign individual key
+    img.src = this.svgFallback(this.book?.title ?? 'No Cover');
   }
 
   mockDescription = `A practical exploration of clean, maintainable software design.
@@ -90,10 +71,10 @@ This overview page is using placeholder text. Replace it with the book's real su
 key takeaways, and why it matters to the reader.`;
 
   ngOnInit() {
-   // ✅ NEW: Use resolver data instead of making HTTP call
+    // Use resolver data instead of making HTTP call
     this.book = this.route.snapshot.data['book'];
-    
-    // ✅ Handle case where resolver returned null (book not found)
+
+    // Handle case where resolver returned null (book not found)
     if (!this.book) {
       // This should rarely happen since resolver handles errors,
       // but good to have as safety net
