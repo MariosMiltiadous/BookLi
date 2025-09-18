@@ -65,7 +65,7 @@
       <!-- Image URL Field -->
       <mat-form-field appearance="outline" class="full-width-field">
         <mat-label>Cover Image URL</mat-label>
-        <input matInput formControlName="imageUrl" placeholder="https://example.com/cover.jpg" />
+        <input matInput formControlName="imageUrl"/>
         <mat-icon matSuffix>image</mat-icon>
         <mat-hint>Optional: Provide a URL to the book's cover image</mat-hint>
       </mat-form-field>
@@ -85,6 +85,7 @@
       <!-- Action Buttons -->
       <div class="actions">
         <button 
+          class="update-book-btn"
           mat-raised-button 
           color="primary" 
           type="submit" 

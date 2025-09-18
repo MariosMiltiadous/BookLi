@@ -107,7 +107,7 @@ mat-form-field {
   }
   
   &.mat-focused .mat-icon[matSuffix] {
-    color: #667eea;
+    color: #f44100;
   }
   
   // Placeholder text
@@ -236,6 +236,10 @@ textarea {
       width: 18px;
     }
   }
+}
+
+.update-book-btn {
+  color: white !important;
 }
 
 // ===== ACCESSIBILITY IMPROVEMENTS =====
