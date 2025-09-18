@@ -21,9 +21,9 @@ import { MAT_SHELL_IMPORTS } from '../app/shared/material/material.imports'
   ],
   providers: [
     provideHttpClient(
-      // include your functional interceptors
+      // include functional interceptors
       withInterceptors([apiPrefixInterceptor, httpErrorInterceptor]),
-      // include DI-provided interceptors (if you still bind any via HTTP_INTERCEPTORS)
+      // include DI-provided interceptors
       withInterceptorsFromDi()
     ),
   ],
