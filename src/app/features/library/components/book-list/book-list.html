@@ -82,7 +82,7 @@
         role="button" tabindex="0">
         <div class="media-wrap" [class.loading]="!isImageLoaded(b.id)">
           <img
-            [src]="b.imageUrl || coverFor(b) || getPlaceholderFor(b)"
+            [src]="getValidImageSrc(b)" 
             [class.loaded]="isImageLoaded(b.id)"
             (load)="onImageLoad(b.id)"
             (error)="onCoverError($event, b)"

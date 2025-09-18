@@ -244,6 +244,26 @@ export class BookList {
     return placeholder;
   }
 
+  getValidImageSrc(book: IBook): string {
+    // Only try imageUrl if it exists and looks valid
+    if (book.imageUrl && this.isValidHttpUrl(book.imageUrl)) {
+      return book.imageUrl;
+    }
+
+    // Skip assets entirely - go straight to SVG placeholder
+    // This prevents the 404 error you're seeing
+    return this.getPlaceholderFor(book);
+  }
+
+  private isValidHttpUrl(url: string): boolean {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
+  
   private reconcileImageStates(current: IBook[]) {
     const keep = new Set(current.map((b) => b.id));
     for (const id of Array.from(this.loadedImages)) {
@@ -253,7 +273,9 @@ export class BookList {
 
   onCoverError(evt: Event, b: IBook) {
     const img = evt.target as HTMLImageElement;
-    img.src = this.getPlaceholderFor(b);
-    this.onImageLoad(b.id);
+    if (!img.src.startsWith('data:image/svg+xml')) {
+      img.src = this.getPlaceholderFor(b);
+      this.onImageLoad(b.id);
+    }
   }
 }
