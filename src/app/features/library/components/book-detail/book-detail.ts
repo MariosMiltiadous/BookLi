@@ -1,4 +1,3 @@
-// src/app/features/library/components/book-detail/book-detail.component.ts
 import {
   Component,
   ChangeDetectionStrategy,

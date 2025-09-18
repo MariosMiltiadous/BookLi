@@ -8,7 +8,7 @@ import { IBookService } from './book.service.interface';
 @Injectable()
 export class HttpBookService implements IBookService {
   private http = inject(HttpClient);
-  private readonly base = '/books'; // Proxy will convert to http://localhost:3000/books
+  private readonly base = '/books'; // Proxy
 
   list(params?: {
     page?: number;

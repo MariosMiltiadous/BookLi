@@ -62,7 +62,7 @@ export class BookOverview implements OnInit {
     // Avoid loops if the fallback itself triggers error
     if (img.dataset && img.dataset['fellBack']) return;
 
-    img.dataset['fellBack'] = '1'; // ✅ assign individual key
+    img.dataset['fellBack'] = '1'; // assign individual key
     img.src = this.svgFallback(this.book?.title ?? 'No Cover');
   }
 
@@ -76,8 +76,6 @@ key takeaways, and why it matters to the reader.`;
 
     // Handle case where resolver returned null (book not found)
     if (!this.book) {
-      // This should rarely happen since resolver handles errors,
-      // but good to have as safety net
       this.notify.error('Book not found');
       this.router.navigate(['/library/books']);
       return;
