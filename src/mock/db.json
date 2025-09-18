@@ -96,7 +96,7 @@
       "author": "Jez Humble",
       "year": 2010,
       "genre": "Software",
-      "imageUrl": "https://m.media-amazon.com/images/I/51t8pFkoTQL._SX379_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
@@ -105,7 +105,7 @@
       "author": "Eric Freeman",
       "year": 2004,
       "genre": "Software",
-      "imageUrl": "https://m.media-amazon.com/images/I/51k+e8nX6NL._SX430_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
@@ -114,7 +114,7 @@
       "author": "Robert C. Martin",
       "year": 2002,
       "genre": "Software",
-      "imageUrl": "https://m.media-amazon.com/images/I/51sn0gOyZSL._SX379_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
@@ -123,7 +123,7 @@
       "author": "Donald Knuth",
       "year": 1968,
       "genre": "Computer Science",
-      "imageUrl": "https://m.media-amazon.com/images/I/41PSUVAuvPL._SX355_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
@@ -132,7 +132,7 @@
       "author": "Jon Bentley",
       "year": 1986,
       "genre": "Software",
-      "imageUrl": "https://m.media-amazon.com/images/I/41odUoKaN3L._SX379_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
@@ -141,7 +141,7 @@
       "author": "Robert Sedgewick",
       "year": 1983,
       "genre": "Science",
-      "imageUrl": "https://m.media-amazon.com/images/I/51T4+Yk5VxL._SX379_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
@@ -150,7 +150,7 @@
       "author": "Aho/Lam/Sethi/Ullman",
       "year": 1986,
       "genre": "Computer Science",
-      "imageUrl": "https://m.media-amazon.com/images/I/51vX0qIuc+L._SX379_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
@@ -159,7 +159,7 @@
       "author": "Harold Abelson",
       "year": 1996,
       "genre": "Software",
-      "imageUrl": "https://m.media-amazon.com/images/I/51y8JpABzRL._SX379_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
@@ -168,7 +168,7 @@
       "author": "Robert C. Martin",
       "year": 2011,
       "genre": "Software",
-      "imageUrl": "https://m.media-amazon.com/images/I/51y1WLFXuVL._SX379_BO1,204,203,200_.jpg",
+      "imageUrl": "",
       "description": ""
     },
     {
